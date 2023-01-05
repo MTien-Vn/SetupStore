@@ -196,4 +196,57 @@ const ProductCreateUpdateDetailPage = () => {
   const handleAddAddress = async (values) => {
 
   };
+  const handleUpdateAddress = async (address, values) => {
+    try {
+ 
+    } catch (err) {
+      console.log("err", err);
+    }
+  };
+  const handleDeleteAddress = async (address) => {
+    try {
+
+    } catch (err) {
+      console.log("err", err);
+    }
+  };
+  const handleCancelUpdateAddress = () => {
+    if (selectedAddress) {
+      formAddAddress.setFieldsValue(selectedAddress);
+    } else {
+      formAddAddress.resetFields();
+    }
+  };
+  //
+  const handleSelectImages = (value) => {
+    console.log("handleSelectImages ~ value", value);
+  };
+  const handleDeselectImage = (value) => {
+    setImages([]);
+  };
+
+  const handleURLUpload = async ({ imageUrl }) => {
+    try {
+    } catch (err) {
+      console.log("err", err);
+    }
+  };
+  const handleFileUploadAndResize = ({ file, fileList }) => {};
+  const handleImageRemove = async () => {
+    try {
+      const productUpdatedResData = await updateUser({
+        userId: userId,
+        initdata: {
+          picture: "",
+        },
+      }).unwrap();
+      setImages([]);
+      form.setFieldsValue({
+        images: [],
+      });
+      notification.error({ message: "Xóa ảnh thành công" });
+    } catch (err) {
+      console.log("err", err);
+    }
+  };
 }
