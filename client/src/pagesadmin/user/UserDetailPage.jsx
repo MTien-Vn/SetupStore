@@ -139,4 +139,61 @@ const ProductCreateUpdateDetailPage = () => {
       console.log(err);
     }
   };
+  const handleDeleteUser = () => {
+    let secondsToGo = 5;
+    const modal = Modal.confirm({
+      title: (
+        <Typography.Paragraph ellipsis={{ rows: 2 }} style={{ maxWidth: 280, margin: 0 }}>
+          Bạn chắc chắc muốn xóa người dùng <b>{userId}</b> ?
+        </Typography.Paragraph>
+      ),
+      icon: null,
+      content: null,
+      okText: "Xác nhận",
+      cancelText: "Hủy",
+      cancelButtonProps: { size: "large" },
+      okButtonProps: { size: "large", danger: true, icon: <BsTrash /> },
+      onOk: async () => {
+        try {
+          const productUpdatedResData = await updateUser({
+            userId: userId,
+            initdata: {
+              status: "deleted",
+            },
+          }).unwrap();
+          notification.error({ message: "Xóa người dùng thành công" });
+          navigate("/admin/users", { replace: true });
+        } catch (err) {
+          console.log("err", err);
+        }
+      },
+    });
+    const timer = setInterval(() => {
+      secondsToGo -= 1;
+      modal.update({
+        content: (
+          <>
+            This modal will be destroyed after {secondsToGo} second.
+            <Progress
+              status="active"
+              strokeColor={{
+                from: "#f5222d",
+                to: "#ff7a45",
+              }}
+              percent={(secondsToGo / 5) * 100}
+              showInfo={false}
+            />
+          </>
+        ),
+      });
+    }, 1000);
+    setTimeout(() => {
+      clearInterval(timer);
+      modal.destroy();
+    }, secondsToGo * 1000 - 1);
+  };
+  //
+  const handleAddAddress = async (values) => {
+
+  };
 }
