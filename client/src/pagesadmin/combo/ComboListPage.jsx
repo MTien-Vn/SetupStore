@@ -7,53 +7,34 @@ import {
   Empty,
   Image,
   List,
-  Popconfirm,
-  Rate,
   Row,
   Space,
   Statistic,
-  Table,
   Tag,
   Tooltip,
   Typography,
 } from "antd";
-import React, { useEffect, useState } from "react";
+import { rgba } from "polished";
+import { useEffect, useState } from "react";
 import {
   BsBoxArrowUpRight,
   BsBoxSeam,
   BsCartCheck,
   BsChatLeftText,
-  BsCheckLg,
   BsEye,
   BsHeart,
   BsLayoutWtf,
   BsStar,
   BsThreeDots,
-  BsXLg,
 } from "react-icons/bs";
-import { rgba } from "polished";
 import { Link } from "react-router-dom";
-import { NOT_FOUND_IMG } from "src/common/constant";
-import { checkValidColor, sorterByWords } from "src/common/utils";
+import { checkValidColor } from "src/common/utils";
 import Button from "src/components/button/Button";
 import MasonryLayout from "src/components/images/MasonryLayout";
 import LocalSearch from "src/components/input/LocalSearch";
 import AdminLayout from "src/layout/AdminLayout";
 import { useGetAllProductsFilteredQuery } from "src/stores/product/product.query";
 import styled from "styled-components";
-
-const findImageById = (id, images) => {
-  return images.find((item) => item._id === id);
-};
-
-const getTotalInventoryQuantity = (variants = []) =>
-  variants.reduce((currentValue, nextValue) => {
-    return currentValue + (nextValue?.quantity || 0);
-  }, 0);
-const getTotalInventorySold = (variants = []) =>
-  variants.reduce((currentValue, nextValue) => {
-    return currentValue + (nextValue?.sold || 0);
-  }, 0);
 
 const ComboListPage = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -81,116 +62,6 @@ const ComboListPage = () => {
   };
   const columns = [
     {
-      title: "Tên sản phẩm",
-      dataIndex: "name",
-      key: "name",
-      ellipsis: true,
-      render: (text, record) => (
-        <Space>
-          <Avatar.Group maxCount={1}>
-            {record.images.map((item) => (
-              <Avatar
-                size={48}
-                src={item.url}
-                fallback={NOT_FOUND_IMG}
-                key={`table_${item._id}`}
-              />
-            ))}
-          </Avatar.Group>
-          <Space size={2} direction="vertical">
-            <Typography.Text ellipsis>{text}</Typography.Text>
-            <Typography.Text type="secondary" ellipsis>
-              {record.desc}
-            </Typography.Text>
-          </Space>
-        </Space>
-      ),
-      sorter: (a, b) => sorterByWords("name")(a, b),
-    },
-    {
-      title: "Thương hiệu",
-      dataIndex: "brand",
-      key: "brand",
-      width: 160,
-      ellipsis: true,
-      render: (text, record) => (
-        <Typography.Text ellipsis>{text}</Typography.Text>
-      ),
-      sorter: (a, b) => sorterByWords("brand")(a, b),
-    },
-    {
-      title: "Bộ sưu tập",
-      dataIndex: "combos",
-      key: "combos",
-      width: 160,
-      render: (text, record) => (
-        <Avatar.Group maxCount={2}>
-          {text.map((c) => (
-            <Link to={`/admin/combos/${c._id}`} key={`ProductCombos_${c._id}`}>
-              <Avatar
-                size={48}
-                shape={"circle"}
-                src={c.image.url}
-                icon={<BsLayoutWtf />}
-                title="Đi đến Bộ sưu tập"
-              ></Avatar>
-            </Link>
-          ))}
-        </Avatar.Group>
-      ),
-      sorter: (a, b) => a.combos.length - b.combos.length,
-    },
-    {
-      title: "Giá hiển thị",
-      dataIndex: "price",
-      key: "price",
-      width: 160,
-      render: (text, record) => (
-        <Statistic
-          suffix="$"
-          valueStyle={{ fontSize: 16 }}
-          value={text}
-        ></Statistic>
-      ),
-      sorter: (a, b) => a.price - b.price,
-    },
-    {
-      title: "Kho hàng",
-      dataIndex: "variants",
-      key: "variants",
-      width: 125,
-      render: (text, record) => {
-        const totalQuantity = getTotalInventoryQuantity(text);
-        const totalSold = getTotalInventorySold(text);
-        return (
-          <Tooltip
-            color={"#fafafa"}
-            overlayStyle={{ maxWidth: 120 }}
-            title={
-              <Descriptions column={2} size="small">
-                <Descriptions.Item label="Đã bán" span={2}>
-                  {totalSold}
-                </Descriptions.Item>
-                <Descriptions.Item label="Tổng kho" span={2}>
-                  {totalQuantity}
-                </Descriptions.Item>
-                <Descriptions.Item label="Phiên bản" span={2}>
-                  {text.length}
-                </Descriptions.Item>
-              </Descriptions>
-            }
-          >
-            <Statistic
-              suffix={`/${totalQuantity}/${text.length}`}
-              valueStyle={{ fontSize: 16 }}
-              value={totalSold}
-            ></Statistic>
-          </Tooltip>
-        );
-      },
-      sorter: (a, b) => a.variants.length - b.variants.length,
-    },
-    {
       title: <BsThreeDots size={24} />,
       dataIndex: "_id",
       key: "actions",
@@ -214,71 +85,6 @@ const ComboListPage = () => {
       <ContentWrapper>
         <LocalSearch onFinish={handleLocalSearch} />
         <Row gutter={24} wrap={false}>
-          <Col flex="auto">
-            <Card
-              title="Danh sách sản phẩm"
-              loading={!getProductsSuccess}
-              extra={
-                <Space>
-                  <Link to={`/admin/products/create`}>
-                    <Button
-                      type="link"
-                      extraType="btntag"
-                      loading={!getProductsSuccess}
-                      icon={<BsBoxArrowUpRight />}
-                    >
-                      Thêm sản phẩm
-                    </Button>
-                  </Link>
-                </Space>
-              }
-            >
-              {getProductsSuccess && (
-                <Table
-                  className="table-fixed-pagination"
-                  rowKey={(record) => record._id}
-                  onRow={(record, rowIndex) => {
-                    return {
-                      onClick: (event) => {
-                        event.preventDefault();
-                        setSelectedProduct(record);
-                      }, // click row
-                    };
-                  }}
-                  rowSelection={{
-                    type: "radio",
-                    selectedRowKeys: [selectedProduct?._id],
-                    defaultSelectedRowKeys: [
-                      productsFilteredQuery.data[0]?._id,
-                    ],
-                    onChange: (selectedRowKeys, selectedRows) => {
-                      setSelectedProduct(selectedRows[0]);
-                      console.log(
-                        `selectedRowKeys: ${selectedRowKeys}`,
-                        "selectedRows: ",
-                        selectedRows
-                      );
-                    },
-                  }}
-                  columns={columns}
-                  footer={() => ""}
-                  dataSource={productsFilteredQuery.data}
-                  size="default"
-                  pagination={{
-                    total: productsFilteredQuery.data.length,
-                    showTotal: (total) => (
-                      <p style={{ marginRight: 16 }}>
-                        Tổng <b>{total}</b>
-                      </p>
-                    ),
-                    defaultPageSize: 10,
-                    showSizeChanger: true,
-                    pageSizeOptions: ["10", "20", "30", "50"],
-                  }}
-                />
-              )}
-            </Card>
-          </Col>
           <Col flex="400px">
             <Card
               title="Thông tin"
