@@ -2,19 +2,19 @@ import { Affix, Col, Layout, Menu, Row } from "antd";
 import { useState } from "react";
 import {
   BsBoxSeam,
-  BsCollection,
-  BsFileText,
   BsGear,
   BsHouseDoor,
   BsLayoutWtf,
   BsPeople,
+  BsCollection,
+  BsFileText,
   BsStar,
 } from "react-icons/bs";
-import { Link, useLocation } from "react-router-dom";
-import Breadcrumb from "src/components/nav/Breadcrumb";
 import HeaderAdmin from "src/components/nav/HeaderAdmin";
 import LogoAndText from "src/components/nav/LogoAndText";
 import SideBarAdmin from "src/components/nav/SideBarAdmin";
+import { Link, useLocation } from "react-router-dom";
+import Breadcrumb from "src/components/nav/Breadcrumb";
 import styled from "styled-components";
 
 const ContentWrapper = styled.div`
@@ -25,6 +25,13 @@ const ContentWrapper = styled.div`
     margin: 24px;
   }
 `;
+
+const LogoWrapper = styled.div`
+height: 64px;
+padding: 16px 24px;
+width: 100%;
+`;
+
 const MenuWrapper = styled.div`
   & .side-menu .side-menu-item {
     display: flex;
@@ -35,13 +42,6 @@ const MenuWrapper = styled.div`
     }
   }
 `;
-
-const LogoWrapper = styled.div`
-  height: 64px;
-  padding: 16px 24px;
-  width: 100%;
-`;
-
 const items = [
   {
     label: <Link to="/admin/dashboard">Tổng quan</Link>,

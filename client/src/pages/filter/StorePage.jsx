@@ -2,14 +2,14 @@ import {
   Affix,
   Checkbox,
   Col,
-  Empty,
-  Form,
   Menu,
   Pagination,
   Radio,
   Rate,
   Row,
   Select,
+  Empty,
+  Form,
   Slider,
   Space,
   Typography,
@@ -18,27 +18,27 @@ import classNames from "classnames";
 import React, { useState } from "react";
 import { BsArrowRepeat, BsCollection, BsCurrencyDollar, BsStar } from "react-icons/bs";
 import { RiFilterFill, RiFilterOffLine } from "react-icons/ri";
-import { useAuth } from "src/common/useAuth";
 import { useDebounce } from "src/common/useDebounce";
-import { isWishlisted } from "src/common/useToggleWishlist";
+import { useAuth } from "src/common/useAuth";
 import Button from "src/components/button/Button";
-import ProductCard, { ProductCardLoading } from "src/components/card/ProductCard";
+import { isWishlisted } from "src/common/useToggleWishlist";
 import ProductDrawerDetail from "src/components/card/ProductDrawerDetail";
-import LocalSearch from "src/components/input/LocalSearch";
+import ProductCard, { ProductCardLoading } from "src/components/card/ProductCard";
 import MainLayout from "src/layout/MainLayout";
+import LocalSearch from "src/components/input/LocalSearch";
 import { useGetAllCategoriesFilteredQuery } from "src/stores/category/category.query";
-import { useGetProductsFilteredQuery } from "src/stores/product/product.query";
 import styled from "styled-components";
+import { useGetProductsFilteredQuery } from "src/stores/product/product.query";
 
 const initialFilterValue = { keyword: "", page: 1, limit: 16 };
 
 const StorePage = () => {
   const { user } = useAuth();
   const [form] = Form.useForm();
-  const [affixed, setAffixed] = useState(false);
   const [currentSubMenu, setCurrentSubMenu] = useState("1");
   const [productsFilterValue, setProductsFilterValue] = useState(initialFilterValue);
   const debouncedProductsFilterValue = useDebounce(productsFilterValue, 500);
+  const [affixed, setAffixed] = useState(false);
 
   const [selectedProductId, setSelectedProductId] = useState(null);
   const {
