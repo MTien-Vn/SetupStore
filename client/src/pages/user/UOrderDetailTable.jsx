@@ -1,4 +1,12 @@
-import { Avatar, Descriptions, Space, Statistic, Table, Tag, Typography } from "antd";
+import {
+  Avatar,
+  Descriptions,
+  Space,
+  Statistic,
+  Table,
+  Tag,
+  Typography,
+} from "antd";
 import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
 import { NOT_FOUND_IMG } from "src/common/constant";
@@ -10,7 +18,7 @@ const UOrderDetailTable = ({
   dataSource = [],
   footer = () => "",
   getSelectedProductId = (p) => console.log(p),
-  className = ""
+  className = "",
 }) => {
   let navigate = useNavigate();
   const columns = [
@@ -35,10 +43,16 @@ const UOrderDetailTable = ({
               </Typography.Text>
               <Space size={12} wrap={false}>
                 {/* <Button>Hủy đơn</Button> */}
-                <Button onClick={() => navigate(`/products/${product}`, { replace: true })}>
+                <Button
+                  onClick={() =>
+                    navigate(`/products/${product}`, { replace: true })
+                  }
+                >
                   Viết đánh giá
                 </Button>
-                <Button onClick={() => getSelectedProductId(product)}>Mua lại</Button>
+                <Button onClick={() => getSelectedProductId(product)}>
+                  Mua lại
+                </Button>
               </Space>
             </Space>
           </Space>
@@ -58,7 +72,47 @@ const UOrderDetailTable = ({
               {saved_variant.map((o, index) => (
                 <Descriptions.Item
                   label={o.name}
-                  
+                  span={1}
+                  key={`variant_options_${variant}_${index}`}
+                >
+                  {checkValidColor(o.value) ? (
+                    <Tag
+                      color={o.value}
+                      className={"tag"}
+                      style={{ height: 22, width: 22, margin: 0 }}
+                    >
+                      {" "}
+                    </Tag>
+                  ) : (
+                    <Tag
+                      color={"default"}
+                      className={"tag"}
+                      style={{ maxWidth: 43, margin: 0 }}
+                    >
+                      <Typography.Text ellipsis>{o.value}</Typography.Text>
+                    </Tag>
+                  )}
+                </Descriptions.Item>
+              ))}
+            </Descriptions>
+          </Space>
+        );
+      },
+    },
+    {
+      title: "Giá bán",
+      dataIndex: "saved_price",
+      key: "saved_price",
+      width: 160,
+      align: "center",
+      render: (text) => (
+        <Statistic value={text} groupSeparator="." prefix="$"></Statistic>
+      ),
+
+      sorter: (a, b) => a.saved_price - b.saved_price,
+    },
+    {
+      title: "Số lượng",
       dataIndex: "saved_quantity",
       key: "saved_quantity",
       width: 160,

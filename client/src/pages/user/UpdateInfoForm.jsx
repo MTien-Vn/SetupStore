@@ -50,13 +50,25 @@ const UpdateInfoForm = () => {
             </ChipTag>
           }
           validateTrigger={"onChange"}
-          rules={[{ required: true, message: "Trường này không được để trống." }]}
+          rules={[
+            { required: true, message: "Trường này không được để trống." },
+          ]}
         >
           <Input placeholder="Nhập tên mới của bạn..." />
         </Form.Item>
 
         <Row gutter={[24, 24]} wrap={false} className="row-picture">
           <Col flex="auto" className="hide-error">
+            <Form.Item
+              initialValue={user?.picture || ""}
+              name="picture"
+              rules={[{ type: "url" }]}
+              label={
+                <ChipTag fontSize={22} icon={<BsImage size={20} />}>
+                  Ảnh đại diện
+                </ChipTag>
+              }
+              tooltip="Đường dẫn ảnh"
             >
               <Input.TextArea
                 rows={2}
@@ -71,7 +83,9 @@ const UpdateInfoForm = () => {
               width="100%"
               height="100%"
               fallback={NOT_FOUND_IMG}
-              onError={(e) => form.setFieldsValue({ picture: user?.picture || "" })}
+              onError={(e) =>
+                form.setFieldsValue({ picture: user?.picture || "" })
+              }
             />
           </Col>
         </Row>
