@@ -9,10 +9,10 @@ const ReviewSchema = mongoose.Schema(
       required: true,
       enum: ["Combo", "Product"],
     },
+    status: { type: String, enum: ["active", "deleted"], default: "active" },
+    rating: { type: Number, required: true },
     createdBy: { type: ObjectId, ref: "User" },
     comment: String,
-    rating: { type: Number, required: true },
-    status: { type: String, enum: ["active", "deleted"], default: "active" },
   },
   { timestamps: true }
 );
