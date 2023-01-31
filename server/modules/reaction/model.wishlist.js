@@ -5,8 +5,8 @@ const WishlistSchema = mongoose.Schema(
   {
     modelId: { type: ObjectId, refPath: "onModel" },
     onModel: {
-      type: String,
       required: true,
+      type: String,
       enum: ["Combo", "Product"],
     },
     createdBy: { type: ObjectId, ref: "User" },
