@@ -147,17 +147,7 @@ const ProfilePage = () => {
     if (getMyOrdersQuery?.data) setMyOrdersListFiltered(getMyOrdersQuery?.data);
   }, [getMyOrdersQuery?.data]);
 
-  const handleCancelMyOrder = ({ _id: orderId, paymentInfo }) => {
-    setSelectedOrderToModal({ orderId, paymentInfo });
-  };
-  const handleDeleteAddress = ({ _id: addressId }) => {
-    console.log("addressId", addressId);
-  };
-  const searched = (keyword) => (c) => c._id.includes(keyword);
-  const handleLocalSearch = ({ keySearch = "" }) => {
-    const newList = myOrdersList.filter(searched(keySearch));
-    setMyOrdersListFiltered(newList);
-  };
+
   const handleChangeChecked = (tag, checked) => {
     const nextSelectedTag = checked ? tag : "";
     const newList = nextSelectedTag

@@ -57,16 +57,6 @@ const UpdateInfoForm = () => {
 
         <Row gutter={[24, 24]} wrap={false} className="row-picture">
           <Col flex="auto" className="hide-error">
-            <Form.Item
-              initialValue={user?.picture || ""}
-              name="picture"
-              rules={[{ type: "url" }]}
-              label={
-                <ChipTag fontSize={22} icon={<BsImage size={20} />}>
-                  Ảnh đại diện
-                </ChipTag>
-              }
-              tooltip="Đường dẫn ảnh"
             >
               <Input.TextArea
                 rows={2}

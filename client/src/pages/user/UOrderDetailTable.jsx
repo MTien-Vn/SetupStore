@@ -58,41 +58,7 @@ const UOrderDetailTable = ({
               {saved_variant.map((o, index) => (
                 <Descriptions.Item
                   label={o.name}
-                  span={1}
-                  key={`variant_options_${variant}_${index}`}
-                >
-                  {checkValidColor(o.value) ? (
-                    <Tag
-                      color={o.value}
-                      className={"tag"}
-                      style={{ height: 22, width: 22, margin: 0 }}
-                    >
-                      {" "}
-                    </Tag>
-                  ) : (
-                    <Tag color={"default"} className={"tag"} style={{ maxWidth: 43, margin: 0 }}>
-                      <Typography.Text ellipsis>{o.value}</Typography.Text>
-                    </Tag>
-                  )}
-                </Descriptions.Item>
-              ))}
-            </Descriptions>
-          </Space>
-        );
-      },
-    },
-    {
-      title: "Giá bán",
-      dataIndex: "saved_price",
-      key: "saved_price",
-      width: 160,
-      align: "center",
-      render: (text) => <Statistic value={text} groupSeparator="." prefix="$"></Statistic>,
-
-      sorter: (a, b) => a.saved_price - b.saved_price,
-    },
-    {
-      title: "Số lượng",
+                  
       dataIndex: "saved_quantity",
       key: "saved_quantity",
       width: 160,
