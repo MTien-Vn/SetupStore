@@ -1163,4 +1163,101 @@ const ProductCreateUpdateDetailPage = () => {
     </AdminLayout>
   );
 };
+const ContentWrapper = styled.div`
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  margin-bottom: 68px;
+  & .content-top {
+    margin-bottom: 24px;
+  }
+  & .content-middle {
+    background: #fff;
+    padding: 24px;
+  }
+  & .form-left-wrapper,
+  .form-right-wrapper {
+    gap: 24px;
+    display: flex;
+    flex-direction: column;
+  }
+  & .content-footer-fixed {
+    background: #fff;
+    display: flex;
+    justify-content: flex-end;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1;
+    background-color: #fff;
+    box-shadow: 0px -1px 4px 0px rgba(153, 153, 153, 0.5);
+    padding: 8px 24px;
+  }
+  & .ant-upload-drag-content p {
+    margin-top: 12px !important;
+  }
+  & .vl {
+    border-left: 2px solid #999;
+    max-height: 500px;
+    height: 100%;
+  }
+  & .preview-wrapper {
+    position: relative;
+    & .actions {
+      position: absolute;
+      top: 0;
+      right: 0;
+      transform: translate(50%, -50%);
+      z-index: 1;
+    }
+  }
+  & .extra-actions {
+    padding-top: 24px;
+    border-top: 1px solid #d9d9d9;
+    & button {
+      background-color: transparent;
+    }
+  }
+`;
+
+const FloatingWrapper = styled.div``;
+const VariantItemWrapper = styled.div`
+  position: relative;
+  background: #fff;
+  border: 1px solid #eee;
+  margin-bottom: 24px;
+  & .container {
+    padding: 12px;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 12px;
+  }
+  & .image-wrapper {
+    flex-shrink: 0;
+    width: 160px;
+    height: 90px;
+    & img {
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+    }
+  }
+  & .content-wrapper {
+    padding-left: 12px;
+    border-left: 1px solid #eee;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 12px;
+  }
+  & .actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(16px, -50%);
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+`;
 export default ProductCreateUpdateDetailPage;
