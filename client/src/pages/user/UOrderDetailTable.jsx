@@ -1,12 +1,4 @@
-import {
-  Avatar,
-  Descriptions,
-  Space,
-  Statistic,
-  Table,
-  Tag,
-  Typography,
-} from "antd";
+import { Avatar, Descriptions, Space, Statistic, Table, Tag, Typography } from "antd";
 import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
 import { NOT_FOUND_IMG } from "src/common/constant";
@@ -18,7 +10,7 @@ const UOrderDetailTable = ({
   dataSource = [],
   footer = () => "",
   getSelectedProductId = (p) => console.log(p),
-  className = "",
+  className = ""
 }) => {
   let navigate = useNavigate();
   const columns = [
@@ -43,16 +35,10 @@ const UOrderDetailTable = ({
               </Typography.Text>
               <Space size={12} wrap={false}>
                 {/* <Button>Hủy đơn</Button> */}
-                <Button
-                  onClick={() =>
-                    navigate(`/products/${product}`, { replace: true })
-                  }
-                >
+                <Button onClick={() => navigate(`/products/${product}`, { replace: true })}>
                   Viết đánh giá
                 </Button>
-                <Button onClick={() => getSelectedProductId(product)}>
-                  Mua lại
-                </Button>
+                <Button onClick={() => getSelectedProductId(product)}>Mua lại</Button>
               </Space>
             </Space>
           </Space>
@@ -84,11 +70,7 @@ const UOrderDetailTable = ({
                       {" "}
                     </Tag>
                   ) : (
-                    <Tag
-                      color={"default"}
-                      className={"tag"}
-                      style={{ maxWidth: 43, margin: 0 }}
-                    >
+                    <Tag color={"default"} className={"tag"} style={{ maxWidth: 43, margin: 0 }}>
                       <Typography.Text ellipsis>{o.value}</Typography.Text>
                     </Tag>
                   )}
@@ -105,9 +87,7 @@ const UOrderDetailTable = ({
       key: "saved_price",
       width: 160,
       align: "center",
-      render: (text) => (
-        <Statistic value={text} groupSeparator="." prefix="$"></Statistic>
-      ),
+      render: (text) => <Statistic value={text} groupSeparator="." prefix="$"></Statistic>,
 
       sorter: (a, b) => a.saved_price - b.saved_price,
     },

@@ -55,10 +55,7 @@ import { useChangeThemeProvider } from "src/common/useChangeThemeProvider";
 import { isWishlisted, useToggleWishlist } from "src/common/useToggleWishlist";
 import { formatDate } from "src/common/utils";
 import Button from "src/components/button/Button";
-import ProductCard, {
-  ProductCardLoading,
-  renderTagStatus,
-} from "src/components/card/ProductCard";
+import ProductCard, { ProductCardLoading, renderTagStatus } from "src/components/card/ProductCard";
 import ProductDrawerDetail from "src/components/card/ProductDrawerDetail";
 import ChipTag from "src/components/chip/ChipTag";
 import ReactionChipTags from "src/components/chip/ReactionChipTags";
@@ -100,8 +97,7 @@ const ProductDetailPage = () => {
   const { productId } = useParams();
   const { themeProvider } = useChangeThemeProvider();
   const { isSignedIn, user, message401 } = useAuth();
-  const { handleToggleWishlist, toggleProductWishlistLoading } =
-    useToggleWishlist();
+  const { handleToggleWishlist, toggleProductWishlistLoading } = useToggleWishlist();
   const [reviewFormVisible, setReviewFormVisible] = useState(false);
   const [productReviewsFilter, setProductReviewsFilter] = useState({
     page: 1,
@@ -109,12 +105,9 @@ const ProductDetailPage = () => {
     sort: "",
     rating: "",
   });
-  const [productViewInc, { isLoading: productViewIncLoading }] =
-    useProductViewIncMutation();
-  const [
-    createReview,
-    { isLoading: createReviewLoading, isSuccess: createReviewSuccess },
-  ] = useCreateReviewMutation();
+  const [productViewInc, { isLoading: productViewIncLoading }] = useProductViewIncMutation();
+  const [createReview, { isLoading: createReviewLoading, isSuccess: createReviewSuccess }] =
+    useCreateReviewMutation();
   const {
     data: productQuery,
     isSuccess: productQuerySuccess,
@@ -142,15 +135,9 @@ const ProductDetailPage = () => {
     productId && getProductsSuccess
       ? productsFilteredQuery?.data.filter((p) => p._id !== productId)
       : [];
-  const totalQuantity = productData
-    ? getTotalInventoryQuantity(productData.variants)
-    : 0;
-  const totalSold = productData
-    ? getTotalInventorySold(productData.variants)
-    : 0;
-  const productReviewsRes = productReviewsQuerySuccess
-    ? productReviewsQuery
-    : null;
+  const totalQuantity = productData ? getTotalInventoryQuantity(productData.variants) : 0;
+  const totalSold = productData ? getTotalInventorySold(productData.variants) : 0;
+  const productReviewsRes = productReviewsQuerySuccess ? productReviewsQuery : null;
   const myReview = getReviewed(productReviewsRes?.reviewers || [], user?._id);
   const [activeKey, setActiveKey] = useState("content");
   const [selectedProductId, setSelectedProductId] = useState(null);
@@ -219,10 +206,7 @@ const ProductDetailPage = () => {
       {productData ? (
         <ProductDetailWrapper>
           <div className="container-big-banner">
-            <img
-              src={productData.images[0]?.url || NOT_FOUND_IMG}
-              alt={productData._id}
-            />
+            <img src={productData.images[0]?.url || NOT_FOUND_IMG} alt={productData._id} />
           </div>
           <div className="container-main">
             {/* <div className="ellipse-box-1"></div> */}
@@ -267,13 +251,8 @@ const ProductDetailPage = () => {
                       split={<Divider type="vertical" />}
                       style={{ marginTop: "auto" }}
                     >
-                      <ReactionChipTags
-                        colorful={false}
-                        size={16}
-                        data={productData}
-                      />
-                      {productData.variants &&
-                        renderTagStatus(productData.variants)}
+                      <ReactionChipTags colorful={false} size={16} data={productData} />
+                      {productData.variants && renderTagStatus(productData.variants)}
                     </Space>
                   </div>
                   <Row className="left-info-bottom" gutter={24} wrap={false}>
@@ -291,25 +270,16 @@ const ProductDetailPage = () => {
                           size={8}
                           align="center"
                         >
-                          <Rate
-                            disabled
-                            defaultValue={productData.avgRating}
-                            allowHalf
-                          />
+                          <Rate disabled defaultValue={productData.avgRating} allowHalf />
                           <span className="rating-value">{`( ${productData.numOfReviews} đánh giá )`}</span>
                         </Space>
                         {productReviewsRes?.reviewers.length > 0 && (
                           <Avatar.Group maxCount={10} size={36}>
-                            {productReviewsRes?.reviewers.map(
-                              ({ createdBy: item }) => (
-                                <Avatar
-                                  src={item.picture}
-                                  key={`reviewer_${item._id}`}
-                                >
-                                  {item.name[0]}
-                                </Avatar>
-                              )
-                            )}
+                            {productReviewsRes?.reviewers.map(({ createdBy: item }) => (
+                              <Avatar src={item.picture} key={`reviewer_${item._id}`}>
+                                {item.name[0]}
+                              </Avatar>
+                            ))}
                           </Avatar.Group>
                         )}
                       </Space>
@@ -322,18 +292,11 @@ const ProductDetailPage = () => {
                         <Descriptions.Item label="Danh mục" span={3}>
                           {productData.category ? (
                             <ChipTag
-                              icon={
-                                <Avatar size={15}>
-                                  {productData.category.name[0]}
-                                </Avatar>
-                              }
+                              icon={<Avatar size={15}>{productData.category.name[0]}</Avatar>}
                               className="colorful rounded"
                               color={"#d9d9d9"}
                             >
-                              <Typography.Text
-                                ellipsis
-                                style={{ maxWidth: 240 }}
-                              >
+                              <Typography.Text ellipsis style={{ maxWidth: 240 }}>
                                 {productData.category.name}
                               </Typography.Text>
                             </ChipTag>
@@ -343,10 +306,7 @@ const ProductDetailPage = () => {
                               className="colorful rounded"
                               color={"#d9d9d9"}
                             >
-                              <Typography.Text
-                                ellipsis
-                                style={{ maxWidth: 240 }}
-                              >
+                              <Typography.Text ellipsis style={{ maxWidth: 240 }}>
                                 Không có
                               </Typography.Text>
                             </ChipTag>
@@ -358,9 +318,7 @@ const ProductDetailPage = () => {
                             title={
                               <Statistic
                                 prefix={
-                                  <Typography.Text
-                                    style={{ fontSize: 14, color: "#eee" }}
-                                  >
+                                  <Typography.Text style={{ fontSize: 14, color: "#eee" }}>
                                     Đã bán:
                                   </Typography.Text>
                                 }
@@ -368,9 +326,7 @@ const ProductDetailPage = () => {
                                 value={totalSold}
                                 valueStyle={{ fontSize: 16, color: "#fff" }}
                                 suffix={
-                                  <Typography.Text
-                                    style={{ fontSize: 14, color: "#eee" }}
-                                  >
+                                  <Typography.Text style={{ fontSize: 14, color: "#eee" }}>
                                     {" "}
                                     / {totalQuantity + totalSold}
                                   </Typography.Text>
@@ -384,8 +340,7 @@ const ProductDetailPage = () => {
                                 to: themeProvider.generatedColors[1],
                               }}
                               percent={(totalSold > 0
-                                ? (totalSold / (totalQuantity + totalSold)) *
-                                  100
+                                ? (totalSold / (totalQuantity + totalSold)) * 100
                                 : 0
                               ).toFixed(2)}
                               strokeWidth={12}
@@ -400,34 +355,23 @@ const ProductDetailPage = () => {
                       </span>
                       <ScrollSnapWrapper>
                         {productData.variants.map((item) => (
-                          <ChipVariantItemWrapper
-                            key={`ChipVariant_${item._id}`}
-                          >
+                          <ChipVariantItemWrapper key={`ChipVariant_${item._id}`}>
                             <div className="left">
                               <img
                                 alt={item._id}
                                 src={
-                                  productData.images.find(
-                                    (img) => img._id === item.image
-                                  )?.url || NOT_FOUND_IMG
+                                  productData.images.find((img) => img._id === item.image)?.url ||
+                                  NOT_FOUND_IMG
                                 }
                               />
                             </div>
                             <div className="right">
                               <div className="price">
-                                <Statistic
-                                  value={item.price}
-                                  suffix="$"
-                                  className="price-tag"
-                                />
+                                <Statistic value={item.price} suffix="$" className="price-tag" />
                               </div>
                               <Space wrap={false} size={8}>
-                                <ChipTag icon={<BsCheck2Circle size={16.5} />}>
-                                  {item.sold}
-                                </ChipTag>
-                                <ChipTag icon={<BsBoxSeam size={14} />}>
-                                  {item.quantity}
-                                </ChipTag>
+                                <ChipTag icon={<BsCheck2Circle size={16.5} />}>{item.sold}</ChipTag>
+                                <ChipTag icon={<BsBoxSeam size={14} />}>{item.quantity}</ChipTag>
                               </Space>
                             </div>
                           </ChipVariantItemWrapper>
@@ -435,9 +379,7 @@ const ProductDetailPage = () => {
                       </ScrollSnapWrapper>
                     </Col>
                     <Col flex={mediaBelow1124 ? "none" : "242px"}>
-                      <div
-                        className={mediaBelow1124 ? "hidden" : "bottom-right"}
-                      >
+                      <div className={mediaBelow1124 ? "hidden" : "bottom-right"}>
                         <Button
                           type="link"
                           extraType="btntag"
@@ -446,10 +388,7 @@ const ProductDetailPage = () => {
                           icon={<BsCartPlus />}
                           className="btn-cart"
                           loading={!productQuerySuccess}
-                          disabled={
-                            !productQuerySuccess ||
-                            productData.variants.length < 1
-                          }
+                          disabled={!productQuerySuccess || productData.variants.length < 1}
                           onClick={() => setSelectedProductId(productId)}
                         >
                           Thêm vào giỏ hàng
@@ -461,10 +400,7 @@ const ProductDetailPage = () => {
                           icon={<BsStar />}
                           className="btn-rating"
                           loading={!productQuerySuccess}
-                          disabled={
-                            !productQuerySuccess ||
-                            productData.variants.length < 1
-                          }
+                          disabled={!productQuerySuccess || productData.variants.length < 1}
                           onClick={() => {
                             setReviewFormVisible(true);
                             setActiveKey("reviews");
@@ -490,33 +426,24 @@ const ProductDetailPage = () => {
                 >
                   <Tabs.TabPane
                     tab={
-                      <ChipTag
-                        size={4}
-                        fontSize={18}
-                        icon={<BsListStars size={16.5} />}
-                      >
+                      <ChipTag size={4} fontSize={18} icon={<BsListStars size={16.5} />}>
                         Bài viết
                       </ChipTag>
                     }
                     key="content"
                   >
-                    <ProductContentWrapper
-                      className={activeKey !== "content" ? "hidden" : ""}
-                    >
+                    <ProductContentWrapper className={activeKey !== "content" ? "hidden" : ""}>
                       <Row wrap={false} gutter={24}>
                         <Col flex="auto" className="left">
                           <Typography.Title level={2}>
                             {productData.content?.title || ""}
                           </Typography.Title>
-                          <PreviewMd
-                            value={productData.content?.content || ""}
-                          />
+                          <PreviewMd value={productData.content?.content || ""} />
                         </Col>
                         {!mediaBelow1024 && (
                           <Col flex="330px" className="right">
                             <Divider orientation="left">
-                              Có thể bạn sẽ thích ·{" "}
-                              {relativeProductsData.length}
+                              Có thể bạn sẽ thích · {relativeProductsData.length}
                             </Divider>
                             <div className="relative-list">
                               {getProductsSuccess ? (
@@ -525,13 +452,8 @@ const ProductDetailPage = () => {
                                     <ProductCard
                                       key={`relative_productcard_${p._id}`}
                                       product={p}
-                                      getSelectedProductId={(p) =>
-                                        setSelectedProductId(p)
-                                      }
-                                      isWishlisted={isWishlisted(
-                                        p.wishlist,
-                                        user?._id
-                                      )}
+                                      getSelectedProductId={(p) => setSelectedProductId(p)}
+                                      isWishlisted={isWishlisted(p.wishlist, user?._id)}
                                     ></ProductCard>
                                   ))
                                 ) : (
@@ -559,11 +481,7 @@ const ProductDetailPage = () => {
                   </Tabs.TabPane>
                   <Tabs.TabPane
                     tab={
-                      <ChipTag
-                        size={4}
-                        fontSize={18}
-                        icon={<BsStar size={16.5} />}
-                      >
+                      <ChipTag size={4} fontSize={18} icon={<BsStar size={16.5} />}>
                         Đánh giá
                       </ChipTag>
                     }
@@ -571,11 +489,7 @@ const ProductDetailPage = () => {
                   ></Tabs.TabPane>
                   <Tabs.TabPane
                     tab={
-                      <ChipTag
-                        size={4}
-                        fontSize={18}
-                        icon={<BsLayoutWtf size={16.5} />}
-                      >
+                      <ChipTag size={4} fontSize={18} icon={<BsLayoutWtf size={16.5} />}>
                         Bộ sưu tập
                       </ChipTag>
                     }
@@ -584,9 +498,7 @@ const ProductDetailPage = () => {
                 </Tabs>
               </div>
 
-              <ProductReviewsWrapper
-                className={activeKey !== "reviews" ? "hidden" : ""}
-              >
+              <ProductReviewsWrapper className={activeKey !== "reviews" ? "hidden" : ""}>
                 <Row wrap={false} gutter={24}>
                   <Col flex={"auto"} className="left">
                     <List
@@ -606,22 +518,13 @@ const ProductDetailPage = () => {
                           >
                             {productData.images.length > 0 ? (
                               productData.images.map((item, index) => (
-                                <div
-                                  className="carousel-item"
-                                  key={`carousel_${item._id}`}
-                                >
+                                <div className="carousel-item" key={`carousel_${item._id}`}>
                                   <img alt={item._id} src={item.url} />
                                 </div>
                               ))
                             ) : (
-                              <div
-                                className="carousel-item"
-                                key={"NOT_FOUND_IMG"}
-                              >
-                                <img
-                                  alt={"NOT_FOUND_IMG"}
-                                  src={NOT_FOUND_IMG}
-                                />
+                              <div className="carousel-item" key={"NOT_FOUND_IMG"}>
+                                <img alt={"NOT_FOUND_IMG"} src={NOT_FOUND_IMG} />
                               </div>
                             )}
                           </Carousel>
@@ -640,30 +543,16 @@ const ProductDetailPage = () => {
                         <li>
                           <Comment
                             actions={[
-                              <Space
-                                wrap={false}
-                                size={4}
-                                split={<Divider type="vertical" />}
-                              >
+                              <Space wrap={false} size={4} split={<Divider type="vertical" />}>
                                 <ChipTag
-                                  icon={
-                                    upvoteValue ? (
-                                      <BsHandThumbsUpFill />
-                                    ) : (
-                                      <BsHandThumbsUp />
-                                    )
-                                  }
+                                  icon={upvoteValue ? <BsHandThumbsUpFill /> : <BsHandThumbsUp />}
                                   onClick={() => setUpvoteValue(1)}
                                 >
                                   {upvoteValue}
                                 </ChipTag>
                                 <ChipTag
                                   icon={
-                                    downvoteValue ? (
-                                      <BsHandThumbsDownFill />
-                                    ) : (
-                                      <BsHandThumbsDown />
-                                    )
+                                    downvoteValue ? <BsHandThumbsDownFill /> : <BsHandThumbsDown />
                                   }
                                   onClick={() => setDownvoteValue(1)}
                                 >
@@ -687,9 +576,7 @@ const ProductDetailPage = () => {
                                 >
                                   {item.rating}
                                 </ChipTag>
-                                <Typography.Text
-                                  strong={item.createdBy?._id === user?._id}
-                                >
+                                <Typography.Text strong={item.createdBy?._id === user?._id}>
                                   {item.createdBy?.name}
                                 </Typography.Text>
                               </Space>
@@ -701,11 +588,7 @@ const ProductDetailPage = () => {
                             }
                             content={
                               <Typography.Paragraph
-                                ellipsis={{
-                                  rows: 3,
-                                  expandable: true,
-                                  symbol: "Xem thêm",
-                                }}
+                                ellipsis={{ rows: 3, expandable: true, symbol: "Xem thêm" }}
                               >
                                 {item.comment}
                               </Typography.Paragraph>
@@ -744,10 +627,7 @@ const ProductDetailPage = () => {
                                 {Array(5)
                                   .fill(null)
                                   .map((item, index) => (
-                                    <Radio
-                                      value={index + 1}
-                                      key={`radio_star_${index}`}
-                                    >
+                                    <Radio value={index + 1} key={`radio_star_${index}`}>
                                       <Rate disabled defaultValue={index + 1} />
                                     </Radio>
                                   ))}
@@ -770,13 +650,8 @@ const ProductDetailPage = () => {
                   )}
                 </Row>
               </ProductReviewsWrapper>
-              <ProductCombosWrapper
-                className={activeKey !== "combos" ? "hidden" : ""}
-              >
-                <Empty
-                  image={Empty.PRESENTED_IMAGE_DEFAULT}
-                  className="bordered"
-                />
+              <ProductCombosWrapper className={activeKey !== "combos" ? "hidden" : ""}>
+                <Empty image={Empty.PRESENTED_IMAGE_DEFAULT} className="bordered" />
               </ProductCombosWrapper>
             </div>
           </div>
@@ -788,9 +663,7 @@ const ProductDetailPage = () => {
                   placement="topRight"
                   destroyTooltipOnHide
                   arrowPointAtCenter
-                  title={
-                    isSignedIn ? "Giỏ hàng! Click it" : "Đăng nhập trước nha"
-                  }
+                  title={isSignedIn ? "Giỏ hàng! Click it" : "Đăng nhập trước nha"}
                 >
                   <Button
                     type="link"
@@ -800,9 +673,7 @@ const ProductDetailPage = () => {
                     icon={<BsCartPlus />}
                     className="btn-cart"
                     loading={!productQuerySuccess}
-                    disabled={
-                      !productQuerySuccess || productData.variants.length < 1
-                    }
+                    disabled={!productQuerySuccess || productData.variants.length < 1}
                     onClick={() => setSelectedProductId(productId)}
                   >
                     Thêm vào giỏ hàng
@@ -858,8 +729,7 @@ const ProductDetailPage = () => {
                       arrowPointAtCenter
                     >
                       <button className="btn-rating">
-                        <BsStar size={16.5} />·
-                        <span>{productData.avgRating}</span>
+                        <BsStar size={16.5} />·<span>{productData.avgRating}</span>
                       </button>
                     </Tooltip>
                   </Space>
@@ -881,7 +751,7 @@ const ProductDetailPage = () => {
       )}
       <BackTop />
       <Modal
-        getContainer={false}
+        // getContainer={false}
         title={!myReview ? "Đánh giá sản phẩm" : null}
         visible={reviewFormVisible}
         okText="Đăng"
@@ -926,11 +796,7 @@ const ProductDetailPage = () => {
                   </ChipTag>
                 }
                 rules={[
-                  {
-                    required: true,
-                    type: "number",
-                    message: "Bạn chưa chọn đánh giá",
-                  },
+                  { required: true, type: "number", message: "Bạn chưa chọn đánh giá" },
                   { min: 1, type: "number", message: "Bạn chưa chọn đánh giá" },
                 ]}
               >
@@ -973,12 +839,7 @@ const ProductDetailPage = () => {
               </Space>,
             ]}
             author={
-              <Space
-                className="rating ant-space-center-items"
-                wrap={false}
-                size={8}
-                align="center"
-              >
+              <Space className="rating ant-space-center-items" wrap={false} size={8} align="center">
                 <ChipTag
                   icon={<BsStarFill />}
                   className="colorful rounded"

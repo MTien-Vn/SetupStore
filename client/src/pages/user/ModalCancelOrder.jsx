@@ -13,8 +13,7 @@ const validateMessages = {
 
 const ModalCancelOrder = ({ selectedOrder = null, setSelectedOrder }) => {
   const [form] = Form.useForm();
-  const [cancelMyOrder, { isLoading: cancelMyOrderLoading }] =
-    useCancelMyOrderMutation();
+  const [cancelMyOrder, { isLoading: cancelMyOrderLoading }] = useCancelMyOrderMutation();
   const isLoading = cancelMyOrderLoading;
   const handleCancelMyOrder = async (initorder, values) => {
     try {
@@ -25,10 +24,7 @@ const ModalCancelOrder = ({ selectedOrder = null, setSelectedOrder }) => {
         orderId,
         initdata: { orderContentNote },
       }).unwrap();
-      message.success(
-        "Yêu cầu hủy đơn thành công! Tài khoản của bạn sẽ được hoàn tiền sớm nhất",
-        4
-      );
+      message.success("Yêu cầu hủy đơn thành công! Tài khoản của bạn sẽ được hoàn tiền sớm nhất", 4);
       form.resetFields();
       setSelectedOrder(null);
     } catch (err) {
