@@ -382,4 +382,785 @@ const ProductCreateUpdateDetailPage = () => {
       images: filteredImages,
     });
   };
-}
+  const handleURLUpload = async ({ imageUrl }) => {
+    try {
+      if (!imageUrl) throw new Error("Url ảnh không được trống");
+      let allUploadedFiles = images;
+      setImageUrlVisible(false);
+      const uploadResData = await uploadAdminImage({
+        onModel: "Product",
+        imageUrl: imageUrl,
+        image: "",
+      }).unwrap();
+      allUploadedFiles.push({ ...uploadResData.data, uid: uploadResData.data._id });
+      setImages([...allUploadedFiles]);
+      form.setFieldsValue({ images: allUploadedFiles });
+      notification.success({ message: "Tải lên thành công" });
+    } catch (err) {
+      notification.error({ message: "Đã có lỗi xảy ra khi tải lên" });
+      console.log("err", err);
+    }
+  };
+  const handleFileUploadAndResize = ({ file, fileList }) => {
+    if (file.status !== "removed") {
+      let allUploadedFiles = images;
+      if (fileList.length > 0) {
+        Resizer.imageFileResizer(
+          file,
+          720,
+          720,
+          "JPEG",
+          100,
+          0,
+          (uri) => {
+            uploadAdminImage({ onModel: "Product", image: uri, imageUrl: "" })
+              .then(({ data: uploadResData }) => {
+                if (uploadResData) {
+                  allUploadedFiles.push({ ...uploadResData.data, uid: uploadResData.data._id });
+                  setImages([...allUploadedFiles]);
+                  form.setFieldsValue({ images: allUploadedFiles });
+                  notification.success({ message: "Tải lên thành công" });
+                }
+              })
+              .catch((err) => {
+                notification.error({ message: "Đã có lỗi xảy ra khi tải lên" });
+                console.log("err", err);
+              });
+          },
+          "base64"
+        );
+      }
+    }
+  };
+  const handleImageRemove = async ({ _id: imageId }) => {
+    try {
+      if (images.length > 1) {
+        const removedImage = await removeAdminImage({ imageId }).unwrap();
+        const filteredImages = images.filter((item) => item._id !== imageId);
+        setImages(filteredImages);
+        const newVariantList =
+          variantList?.map((v) => {
+            if (v.image === imageId)
+              return {
+                ...v,
+                image: filteredImages[0]?._id || undefined,
+              };
+            return v;
+          }) || [];
+        setVariantList(newVariantList);
+        if (productId) {
+          const variantsUpdatedResData = await Promise.all(
+            newVariantList.map(
+              async ({ _id, image }) =>
+                await updateVariant({ variantId: _id, initdata: { image } }).unwrap()
+            )
+          );
+        }
+        form.setFieldsValue({
+          images: filteredImages,
+        });
+        notification.info({ message: "Xóa ảnh thành công" });
+      } else {
+        notification.error({ message: "Sản phẩm chỉ còn 1 ảnh" });
+      }
+    } catch (err) {
+      notification.error({ message: "Đã có lỗi xảy ra khi xóa ảnh" });
+      console.log("err", err);
+    }
+  };
+  const handleVariantImageError = (e) => {};
+  return (
+    <AdminLayout>
+      <ContentWrapper>
+        <Form
+          form={form}
+          disabled={
+            (productId && !getProductSuccess) ||
+            createProductLoading ||
+            updateProductLoading ||
+            deleteProductLoading
+          }
+          id="form"
+          name="form"
+          layout="vertical"
+          autoComplete="off"
+          requiredMark={false}
+          size="large"
+          onFinish={productId ? handleUpdate : handleCreate}
+          validateMessages={validateMessages}
+        >
+          <Row gutter={24} wrap={false}>
+            <Col flex="auto" className="form-left-wrapper">
+              <Card title="Chi tiết sản phẩm" loading={productId && !getProductSuccess}>
+                <Form.Item name="name" label={"Tên sản phẩm"} rules={[{ required: true }]}>
+                  <Input placeholder="Nhập tên sản phẩm..." />
+                </Form.Item>
+                <Form.Item name="desc" label={"Mô tả ngắn"} rules={[{ required: true }]}>
+                  <Input.TextArea
+                    rows={4}
+                    showCount
+                    autoSize={{ minRows: 4, maxRows: 4 }}
+                    placeholder="Nhập mô tả sản phẩm..."
+                  />
+                </Form.Item>
+              </Card>
+              <Card title="Bài viết" loading={productId && !getProductSuccess}>
+                <Form.Item name="contentTitle" rules={[{ required: true }]}>
+                  <Input placeholder="Tiêu đề..." />
+                </Form.Item>
+                <Form.Item name="contentValue" rules={[{ required: true }]}>
+                  <MdEditor placeholder="Bài viết sản phẩm..." />
+                </Form.Item>
+              </Card>
+              <Card
+                loading={productId && !getProductSuccess}
+                title={`Hình ảnh · ${images.length}`}
+                extra={
+                  <Space split={<Divider type="vertical" />}>
+                    <Form.Item noStyle>
+                      <Select
+                        loading={!imagesFilteredSuccess}
+                        disabled={!imagesFilteredSuccess}
+                        bordered={false}
+                        value={null}
+                        defaultValue={null}
+                        placeholder="Chọn ảnh..."
+                        size="small"
+                        style={{
+                          width: 200,
+                        }}
+                        showArrow
+                        onSelect={handleSelectImages}
+                        listHeight={250}
+                      >
+                        {imagesFilteredSuccess &&
+                          imagesFilteredQuery?.data
+                            .filter((o) => !images.find((item) => item._id === o._id))
+                            .map((item) => (
+                              <Select.Option key={item._id} value={item._id}>
+                                <Space align="center" style={{ height: "100%" }} wrap={false}>
+                                  <Avatar size="small" src={item.url}>
+                                    {item._id}
+                                  </Avatar>
+                                  <Typography.Text ellipsis>{item._id}</Typography.Text>
+                                </Space>
+                              </Select.Option>
+                            ))}
+                      </Select>
+                    </Form.Item>
+                    <Space>
+                      <Button
+                        type="link"
+                        htmlType="button"
+                        onClick={() => setImageUrlVisible(true)}
+                      >
+                        Thêm ảnh từ URL
+                      </Button>
+                      <label htmlFor="images">
+                        <Typography.Link>Thêm ảnh sản phẩm</Typography.Link>
+                      </label>
+                    </Space>
+                  </Space>
+                }
+              >
+                <Form.Item name="images" noStyle>
+                  <Upload.Dragger
+                    accept="image/*"
+                    disabled={uploadAdminImageLoading || removeAdminImageLoading}
+                    multiple={true}
+                    maxCount={6}
+                    listType="picture-card"
+                    className={images.length > 0 ? "hidden" : ""}
+                    id="images"
+                    fileList={[]}
+                    beforeUpload={() => false}
+                    onChange={handleFileUploadAndResize}
+                    onRemove={(file) => handleImageRemove(file)}
+                  >
+                    {uploadAdminImageLoading || removeAdminImageLoading ? (
+                      <div className="ant-upload-drag-content">
+                        <Spin size="large" indicator={<LogoCube loading size={28} />} />
+                        <p className="ant-upload-text">Loading...</p>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="ant-upload-drag-icon">
+                          <AiOutlineInbox size={45} />
+                        </div>
+                        <p className="ant-upload-text">Thả file ảnh vào đây để thêm mới</p>
+                      </>
+                    )}
+                  </Upload.Dragger>
+                </Form.Item>
+                {images.length > 0 && (
+                  <MasonryLayout columns={3} gap={24}>
+                    {images.map((item) => (
+                      <div className="preview-wrapper" key={item._id}>
+                        <div className="actions">
+                          <Button
+                            shape="circle"
+                            type="dashed"
+                            icon={<AiOutlineMinus />}
+                            onClick={() => handleDeselectImage(item._id)}
+                          ></Button>
+                        </div>
+                        <Image
+                          src={item.url}
+                          fallback={NOT_FOUND_IMG}
+                          preview={{
+                            visible: previewVisible,
+                            onVisibleChange: (value) => {
+                              setPreviewVisible(value);
+                            },
+                            src: previewImage?.url || NOT_FOUND_IMG,
+                            mask: (
+                              <Space size={16} style={{ zIndex: 10 }}>
+                                <Tooltip title="Xem ảnh" color={"#434343"}>
+                                  <Button
+                                    type="dashed"
+                                    ghost
+                                    shape="circle"
+                                    size="large"
+                                    icon={<BsEye />}
+                                    onClick={(event) => {
+                                      event.stopPropagation();
+                                      setPreviewVisible(true);
+                                      setPreviewImage(item);
+                                    }}
+                                  ></Button>
+                                </Tooltip>
+                                <Tooltip title="Xóa ảnh" color={"#434343"}>
+                                  <Popconfirm
+                                    title={
+                                      <Typography.Paragraph
+                                        ellipsis={{ rows: 3 }}
+                                        style={{ maxWidth: 280, margin: 0 }}
+                                      >
+                                        Bạn chắc chắc muốn xóa <b>{item._id}</b>?
+                                        <br />
+                                        {`(ảnh sẽ ko còn trong DB và cloud)`}
+                                      </Typography.Paragraph>
+                                    }
+                                    placement="bottomRight"
+                                    okText={<BsCheckLg />}
+                                    cancelText={<BsXLg />}
+                                    onConfirm={(event) => {
+                                      event.stopPropagation();
+                                      handleImageRemove(item);
+                                    }}
+                                  >
+                                    <Button
+                                      type="dashed"
+                                      shape="circle"
+                                      ghost
+                                      size="large"
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        setPreviewVisible(false);
+                                        setPreviewImage(null);
+                                      }}
+                                      disabled={uploadAdminImageLoading || removeAdminImageLoading}
+                                      icon={<BsTrash />}
+                                    ></Button>
+                                  </Popconfirm>
+                                </Tooltip>
+                              </Space>
+                            ),
+                          }}
+                        ></Image>
+                      </div>
+                    ))}
+                  </MasonryLayout>
+                )}
+              </Card>
+              <Card
+                title={`Phiên bản · ${variantList?.length || 0}`}
+                loading={productId && !getProductSuccess}
+              >
+                {variantList.length > 0 && (
+                  <List
+                    dataSource={variantList}
+                    rowKey={(item) => item._id}
+                    itemLayout="horizontal"
+                    renderItem={(item) => (
+                      <VariantItemWrapper>
+                        <div className="container">
+                          <div className="image-wrapper">
+                            <Image
+                              preview={false}
+                              alt={item._id}
+                              src={foundVariantImage(item.image)?.url}
+                              onError={handleVariantImageError}
+                              fallback={NOT_FOUND_IMG}
+                            />
+                          </div>
+                          <div className="content-wrapper">
+                            <Descriptions column={1} size="small">
+                              <Descriptions.Item label="Giá" span={1}>
+                                <Statistic
+                                  suffix="$"
+                                  valueStyle={{ fontSize: 14 }}
+                                  value={item.price}
+                                ></Statistic>
+                              </Descriptions.Item>
+                              <Descriptions.Item label="Đã bán" span={1}>
+                                <Statistic
+                                  valueStyle={{ fontSize: 14 }}
+                                  value={item?.sold || 0}
+                                ></Statistic>
+                              </Descriptions.Item>
+                              <Descriptions.Item label="Số lượng" span={1}>
+                                <Statistic
+                                  valueStyle={{ fontSize: 14 }}
+                                  value={item.quantity}
+                                ></Statistic>
+                              </Descriptions.Item>
+                            </Descriptions>
+                            <Descriptions column={1} size="small">
+                              {item.options.map((o, index) => (
+                                <Descriptions.Item
+                                  label={o.name}
+                                  span={1}
+                                  key={`variant_options_${item._id}_${index}`}
+                                >
+                                  <Tag
+                                    color={checkValidColor(o.value) ? o.value : "default"}
+                                    className={"tag"}
+                                  >
+                                    {o.value}
+                                  </Tag>
+                                </Descriptions.Item>
+                              ))}
+                            </Descriptions>
+                          </div>
+                        </div>
+                        <div className="actions">
+                          <Button
+                            disabled={addVariantVisible}
+                            icon={<BsPencil />}
+                            shape="circle"
+                            type="dashed"
+                            onClick={() => {
+                              setSelectedVariant(item);
+                              formAddVariant.setFieldsValue(item);
+                              setAddVariantVisible(true);
+                            }}
+                          ></Button>
+                          <Popconfirm
+                            title={
+                              <Typography.Paragraph
+                                ellipsis={{ rows: 2 }}
+                                style={{ maxWidth: 280, margin: 0 }}
+                              >
+                                Bạn chắc chắc muốn xóa <b>{item._id}</b>?
+                              </Typography.Paragraph>
+                            }
+                            placement="bottomRight"
+                            okText={<BsCheckLg />}
+                            cancelText={<BsXLg />}
+                            onConfirm={() => handleDeleteVariant(item)}
+                          >
+                            <Button
+                              disabled={addVariantVisible}
+                              shape="circle"
+                              type="dashed"
+                              icon={<AiOutlineMinus />}
+                            ></Button>
+                          </Popconfirm>
+                        </div>
+                      </VariantItemWrapper>
+                    )}
+                  />
+                )}
+                <Button
+                  htmlType="button"
+                  type="dashed"
+                  onClick={() => {
+                    formAddVariant.resetFields();
+                    setSelectedVariant(null);
+                    setAddVariantVisible(true);
+                  }}
+                  disabled={addVariantVisible}
+                  size="large"
+                  block
+                  icon={<AiOutlinePlusCircle />}
+                >
+                  Thêm phiên bản
+                </Button>
+              </Card>
+            </Col>
+            <Col flex="400px" className="form-right-wrapper">
+              <Card title={<BsSliders />} loading={productId && !getProductSuccess}>
+                <Form.Item name="brand" label={"Thương hiệu"} rules={[{ required: true }]}>
+                  <Input placeholder="Nhập thương hiệu..." />
+                </Form.Item>
+                <Form.Item
+                  name="price"
+                  label={"Giá hiển thị · USD"}
+                  rules={[{ required: true }]}
+                >
+                  <InputNumber
+                    min={0}
+                    style={{ width: "100%" }}
+                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+                    step={10}
+                    placeholder="Nhập giá sản phẩm..."
+                  />
+                </Form.Item>
+                <Divider />
+                <Form.Item name="category" label="Danh mục" rules={[{ required: true }]}>
+                  <Select
+                    placeholder="Chọn danh mục..."
+                    showSearch
+                    optionFilterProp="children"
+                    onChange={(value) =>
+                      form.setFieldsValue({
+                        category: value,
+                      })
+                    }
+                    filterOption={(input, option) =>
+                      vietnameseSlug(option.children, " ").indexOf(vietnameseSlug(input, " ")) >= 0
+                    }
+                  >
+                    {getCategoriesSuccess &&
+                      categoriesFilteredQuery.data.map((c) => (
+                        <Select.Option key={c._id} value={c._id}>
+                          <Space align="center" style={{ height: "100%" }} wrap={false}>
+                            <Avatar size="small" src={c.image}>
+                              {c.name[0]}
+                            </Avatar>
+                            <Typography.Text ellipsis>{c.name}</Typography.Text>
+                          </Space>
+                        </Select.Option>
+                      ))}
+                  </Select>
+                </Form.Item>
+              </Card>
+              {productId && (
+                <div className="extra-actions">
+                  <Alert
+                    message={"Xóa sản phẩm"}
+                    description={null}
+                    type="error"
+                    action={
+                      <Button
+                        type="dashed"
+                        danger
+                        htmlType="button"
+                        onClick={handleDeleteProduct}
+                        icon={<BsTrash />}
+                      >
+                        Xóa
+                      </Button>
+                    }
+                  />
+                </div>
+              )}
+            </Col>
+          </Row>
+          <div className="content-footer-fixed">
+            <Space split={<Divider type="vertical" />}>
+              <Button
+                type="text"
+                htmlType="button"
+                extraType="btndanger"
+                className="btndanger"
+                onClick={handleCancel}
+              >
+                Hủy
+              </Button>
+              <Form.Item noStyle shouldUpdate>
+                {() => (
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    disabled={!!form.getFieldsError().filter(({ errors }) => errors.length).length}
+                  >
+                    {productId ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}
+                  </Button>
+                )}
+              </Form.Item>
+            </Space>
+          </div>
+        </Form>
+      </ContentWrapper>
+      <Drawer
+        closeIcon={<BsArrowLeft size={20} />}
+        visible={addVariantVisible}
+        width={500}
+        onClose={() => {
+          formAddVariant.resetFields();
+          setSelectedVariant(null);
+          setAddVariantVisible(false);
+        }}
+        title={selectedVariant?._id ? `Phiên bản · ${selectedVariant._id}` : "Phiên bản"}
+        footerStyle={{
+          display: "flex",
+          justifyContent: "flex-end",
+          flexWrap: "nowrap",
+          padding: "10px 24px",
+        }}
+        // getContainer={false}
+        className="hide-scrollbar"
+        extra={
+          selectedVariant ? (
+            <Popconfirm
+              title={
+                <Typography.Paragraph ellipsis={{ rows: 2 }} style={{ maxWidth: 280, margin: 0 }}>
+                  Bạn chắc chắc muốn xóa {selectedVariant?._id ? <b>{selectedVariant._id}</b> : ""}?
+                </Typography.Paragraph>
+              }
+              placement="bottomRight"
+              okText={<BsCheckLg />}
+              cancelText={<BsXLg />}
+              onConfirm={() => handleDeleteVariant(selectedVariant)}
+            >
+              <Button
+                disabled={selectedVariant == null}
+                type="text"
+                extraType="btndanger"
+                className="btndanger"
+              >
+                Xóa
+              </Button>
+            </Popconfirm>
+          ) : null
+        }
+        footer={
+          <Space split={<Divider type="vertical" />}>
+            <Button
+              type="text"
+              form="formAddVariant"
+              htmlType="button"
+              extraType="btndanger"
+              className="btndanger"
+              onClick={handleCancelUpdateVariant}
+              disabled={createVariantLoading || updateVariantLoading}
+            >
+              Hủy
+            </Button>
+            <Button
+              form="formAddVariant"
+              type="primary"
+              htmlType="submit"
+              loading={createVariantLoading || updateVariantLoading}
+              disabled={createVariantLoading || updateVariantLoading}
+            >
+              {!!selectedVariant ? "Cập nhật phiên bản" : "Thêm phiên bản"}
+            </Button>
+          </Space>
+        }
+      >
+        <Popover
+          placement="leftTop"
+          title={null}
+          visible={!!selectedVariant && addVariantVisible}
+          align={{ offset: [-24, -24] }}
+          zIndex={1001}
+          content={
+            <FloatingWrapper>
+              <Statistic
+                title="Đã bán"
+                value={selectedVariant?.sold || 0}
+                prefix={<BsCartCheck />}
+              />
+            </FloatingWrapper>
+          }
+        >
+          <Form
+            id="formAddVariant"
+            name="variantForm"
+            form={formAddVariant}
+            layout="vertical"
+            autoComplete="off"
+            requiredMark={false}
+            size="large"
+            onFinish={(values) =>
+              !!selectedVariant
+                ? handleUpdateVariant(selectedVariant, values)
+                : handleAddVariant(values)
+            }
+            validateMessages={validateMessages}
+          >
+            <Form.Item label="Giá bán" rules={[{ required: true }]} name="price">
+              <InputNumber
+                autoFocus
+                min={0}
+                style={{ width: "100%" }}
+                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+                step={10}
+                placeholder={`Nhập giá phiên bản...`}
+              />
+            </Form.Item>
+            <Form.Item label="Số lượng" rules={[{ required: true }]} name="quantity">
+              <InputNumber
+                min={0}
+                style={{ width: "100%" }}
+                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+                step={1}
+                placeholder={`Nhập số lượng sản phẩm...`}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Hình ảnh"
+              rules={[{ required: true }]}
+              name="image"
+              tooltip="Chọn từ hình ảnh sản phẩm"
+            >
+              <Select placeholder="Chọn ảnh..." optionLabelProp="value">
+                {images.map((item) => (
+                  <Select.Option key={item._id} value={item._id}>
+                    <Space align="center" style={{ height: "100%" }} wrap={false}>
+                      <Avatar size="small" src={item.url}>
+                        {item._id}
+                      </Avatar>
+                      <Typography.Text ellipsis>{item._id}</Typography.Text>
+                    </Space>
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+            <Divider />
+            <Form.List
+              name="options"
+              rules={[
+                {
+                  validator: async (_, names) => {
+                    if (!names || names.length < 1) {
+                      return Promise.reject(new Error("Phiên bản cần tối thiểu 1 thuộc tính"));
+                    }
+                  },
+                },
+              ]}
+            >
+              {(fields, { add, remove }, { errors }) => (
+                <>
+                  {fields.map(({ key, name, ...restField }, index) => (
+                    <Form.Item
+                      label={index === 0 ? `Danh sách thuộc tính · ${fields.length}` : ""}
+                      required={false}
+                      key={key}
+                      style={{ width: "100%" }}
+                    >
+                      <Row
+                        justify="space-between"
+                        gutter={[12, 0]}
+                        wrap={false}
+                        className="hide-error"
+                      >
+                        <Col flex="auto">
+                          <Row gutter={[12, 0]} wrap={false}>
+                            <Col span={12}>
+                              <Form.Item
+                                {...restField}
+                                validateTrigger={["onChange"]}
+                                rules={[{ required: true }]}
+                                name={[name, "name"]}
+                              >
+                                <Input
+                                  autoFocus
+                                  placeholder={`Nhập tên thuộc tính ${index + 1}...`}
+                                />
+                              </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                              <Form.Item
+                                {...restField}
+                                validateTrigger={["onChange"]}
+                                rules={[{ required: true }]}
+                                name={[name, "value"]}
+                              >
+                                <Input placeholder={`Nhập giá trị thuộc tính ${index + 1}...`} />
+                              </Form.Item>
+                            </Col>
+                          </Row>
+                        </Col>
+                        <Col flex="none">
+                          {fields.length > 0 ? (
+                            <Button
+                              shape="circle"
+                              danger
+                              type="dashed"
+                              icon={<AiOutlineMinus />}
+                              onClick={() => remove(name)}
+                            ></Button>
+                          ) : null}
+                        </Col>
+                      </Row>
+                    </Form.Item>
+                  ))}
+                  <Form.Item noStyle>
+                    <Button
+                      type="dashed"
+                      onClick={() => add()}
+                      block
+                      size="large"
+                      icon={<AiOutlinePlusCircle />}
+                    >
+                      Thêm thuộc tính
+                    </Button>
+                    <Form.ErrorList errors={errors} />
+                  </Form.Item>
+                </>
+              )}
+            </Form.List>
+          </Form>
+        </Popover>
+      </Drawer>
+      <Modal
+        // getContainer={false}
+        title={"Đường dẫn ảnh"}
+        visible={imageUrlVisible}
+        okText="Tải lên"
+        cancelText="Hủy"
+        onCancel={() => {
+          formImageUrl.resetFields();
+          setImageUrlVisible(false);
+        }}
+        okButtonProps={{
+          loading: uploadAdminImageLoading || removeAdminImageLoading,
+          disabled: !imageUrl,
+          icon: <BsUpload />,
+        }}
+        onOk={() => {
+          formImageUrl
+            .validateFields()
+            .then(({ imageUrl }) => {
+              formImageUrl.resetFields();
+              handleURLUpload({ imageUrl });
+            })
+            .catch((err) => {
+              console.log("Validate Failed:", err);
+            });
+        }}
+      >
+        <Row gutter={[24, 24]} wrap={false}>
+          <Col flex="124px">
+            <Image
+              src={imageUrl}
+              width="100%"
+              height={100}
+              fallback={NOT_FOUND_IMG}
+              onError={(e) => formImageUrl.resetFields()}
+            />
+          </Col>
+          <Col flex="auto" className="hide-error">
+            <Form form={formImageUrl} id="formImageUrl" name="formImageUrl" layout="vertical">
+              <Form.Item initialValue="" name="imageUrl" rules={[{ type: "url" }]}>
+                <Input.TextArea
+                  rows={4}
+                  autoSize={{ minRows: 4, maxRows: 4 }}
+                  placeholder="Nhập đường dẫn ảnh..."
+                />
+              </Form.Item>
+            </Form>
+          </Col>
+        </Row>
+      </Modal>
+    </AdminLayout>
+  );
+};
+export default ProductCreateUpdateDetailPage;
