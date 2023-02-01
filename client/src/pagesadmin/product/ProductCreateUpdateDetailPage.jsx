@@ -133,6 +133,7 @@ const ProductCreateUpdateDetailPage = () => {
     useRemoveAdminImageMutation();
   const imageUrl = Form.useWatch("imageUrl", formImageUrl);
   const foundVariantImage = (imageId) => imageId && images.find((img) => img._id === imageId);
+
   useEffect(() => {
     if (getProductSuccess) {
       const {
@@ -382,6 +383,7 @@ const ProductCreateUpdateDetailPage = () => {
       images: filteredImages,
     });
   };
+
   const handleURLUpload = async ({ imageUrl }) => {
     try {
       if (!imageUrl) throw new Error("Url ảnh không được trống");
@@ -1163,6 +1165,7 @@ const ProductCreateUpdateDetailPage = () => {
     </AdminLayout>
   );
 };
+
 const ContentWrapper = styled.div`
   width: 100%;
   max-width: 1240px;
@@ -1260,4 +1263,5 @@ const VariantItemWrapper = styled.div`
     gap: 8px;
   }
 `;
+
 export default ProductCreateUpdateDetailPage;

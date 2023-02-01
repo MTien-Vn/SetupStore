@@ -89,9 +89,6 @@ const CheckoutPage = () => {
   const myAddressList = getMyAddressListSuccess ? getMyAddressListQuery?.data : [];
   const productItems = cart?.products || [];
   const SHIPPING = productItems.length;
-  useLayoutEffect(() => {
-    myCartRefetch();
-  }, []);
 
   useEffect(() => {
     if (productItems.length > 0 && isSignedIn) {

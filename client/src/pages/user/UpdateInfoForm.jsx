@@ -50,9 +50,7 @@ const UpdateInfoForm = () => {
             </ChipTag>
           }
           validateTrigger={"onChange"}
-          rules={[
-            { required: true, message: "Trường này không được để trống." },
-          ]}
+          rules={[{ required: true, message: "Trường này không được để trống." }]}
         >
           <Input placeholder="Nhập tên mới của bạn..." />
         </Form.Item>
@@ -83,9 +81,7 @@ const UpdateInfoForm = () => {
               width="100%"
               height="100%"
               fallback={NOT_FOUND_IMG}
-              onError={(e) =>
-                form.setFieldsValue({ picture: user?.picture || "" })
-              }
+              onError={(e) => form.setFieldsValue({ picture: user?.picture || "" })}
             />
           </Col>
         </Row>

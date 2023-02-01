@@ -48,6 +48,7 @@ const UserListPage = () => {
   const handleLocalSearch = (values) => {
     setUsersFilterValue({ ...usersFilterValue, keyword: values.keySearch });
   };
+
   const columns = [
     {
       title: "Người dùng",

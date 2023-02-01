@@ -67,12 +67,7 @@ import { useAuth } from "src/common/useAuth";
 import ChipTag from "src/components/chip/ChipTag";
 import GalleryBgLayoutWithHeader from "src/layout/GalleryBgLayoutWithHeader";
 import styled from "styled-components";
-import {
-  checkValidColor,
-  findImageById,
-  formatDate,
-  setColorByStatus,
-} from "src/common/utils";
+import { checkValidColor, findImageById, formatDate, setColorByStatus } from "src/common/utils";
 import { useGetReviewsFilteredQuery } from "src/stores/review/review.query";
 import { useGetMyOrdersQuery } from "src/stores/order/order.query";
 import { useNavigate } from "react-router-dom";
@@ -81,10 +76,7 @@ import { useGetProductsWishlistByUserIdQuery } from "src/stores/product/product.
 import { NOT_FOUND_IMG } from "src/common/constant";
 import classNames from "classnames";
 import { isWishlisted, useToggleWishlist } from "src/common/useToggleWishlist";
-import {
-  getTotalInventoryQuantity,
-  getTotalInventorySold,
-} from "../product/ProductDetailPage";
+import { getTotalInventoryQuantity, getTotalInventorySold } from "../product/ProductDetailPage";
 import { useChangeThemeProvider } from "src/common/useChangeThemeProvider";
 import TinyAreaChart from "src/components/chart/TinyAreaChart";
 import TinyColumnChart from "src/components/chart/TinyColumnChart";
@@ -109,39 +101,28 @@ const getTotalCount = (products = []) => {
 const ProfilePage = () => {
   let navigate = useNavigate();
   const { user } = useAuth();
-  const { handleToggleWishlist, toggleProductWishlistLoading } =
-    useToggleWishlist();
+  const { handleToggleWishlist, toggleProductWishlistLoading } = useToggleWishlist();
   const { themeProvider } = useChangeThemeProvider();
   const { data: getMyAddressListQuery, isSuccess: getMyAddressListSuccess } =
     useGetMyAddressListQuery();
-  const {
-    data: getMyReviewsFilteredQuery,
-    isSuccess: getMyReviewsFilteredSuccess,
-  } = useGetReviewsFilteredQuery(
-    { page: 1, limit: 10, onModel: "Product", createdBy: user?._id },
-    { skip: !user?._id }
-  );
+  const { data: getMyReviewsFilteredQuery, isSuccess: getMyReviewsFilteredSuccess } =
+    useGetReviewsFilteredQuery(
+      { page: 1, limit: 10, onModel: "Product", createdBy: user?._id },
+      { skip: !user?._id }
+    );
   const {
     data: getMyOrdersQuery,
     isSuccess: getMyOrdersSuccess,
     refetch: getMyOrdersRefetch,
   } = useGetMyOrdersQuery({}, { skip: !user?._id });
-  const {
-    data: getMyProductsWishlistQuery,
-    isSuccess: getMyProductsWishlistSuccess,
-  } = useGetProductsWishlistByUserIdQuery({}, { skip: !user?._id });
+  const { data: getMyProductsWishlistQuery, isSuccess: getMyProductsWishlistSuccess } =
+    useGetProductsWishlistByUserIdQuery({}, { skip: !user?._id });
   const [activeTabKey, setActiveTabKey] = useState("history");
-  const myAddressList = getMyAddressListSuccess
-    ? getMyAddressListQuery?.data
-    : [];
+  const myAddressList = getMyAddressListSuccess ? getMyAddressListQuery?.data : [];
   const foundAddress = findImageById(user?.defaultAddress, myAddressList);
   const myOrdersList = getMyOrdersSuccess ? getMyOrdersQuery?.data : [];
-  const myProductsWishlist = getMyProductsWishlistSuccess
-    ? getMyProductsWishlistQuery?.data
-    : [];
-  const myProductReviews = getMyReviewsFilteredSuccess
-    ? getMyReviewsFilteredQuery?.data
-    : [];
+  const myProductsWishlist = getMyProductsWishlistSuccess ? getMyProductsWishlistQuery?.data : [];
+  const myProductReviews = getMyReviewsFilteredSuccess ? getMyReviewsFilteredQuery?.data : [];
   const [upvoteValue, setUpvoteValue] = useState(0);
   const [downvoteValue, setDownvoteValue] = useState(0);
   const [selectedAddress, setSelectedAddress] = useState(null);
@@ -154,9 +135,7 @@ const ProfilePage = () => {
   const [myOrdersListFiltered, setMyOrdersListFiltered] = useState([]);
   const dataForTinyChart = (arr = []) =>
     arr
-      .filter(
-        (item) => !["CANCELLING", "CANCELLED"].includes(item.orderStatus.value)
-      )
+      .filter((item) => !["CANCELLING", "CANCELLED"].includes(item.orderStatus.value))
       .map((item) => item.totalPrice);
   const statusList =
     uniqBy(
@@ -220,23 +199,11 @@ const ProfilePage = () => {
                           <Typography.Text type="secondary" ellipsis>
                             Địa chỉ mặc định
                           </Typography.Text>
-                          <Space
-                            direction="vertical"
-                            size={2}
-                            style={{ width: "100%" }}
-                          >
+                          <Space direction="vertical" size={2} style={{ width: "100%" }}>
                             <ChipTag icon={<BsPinMap />}>
-                              <Space
-                                size={0}
-                                wrap={false}
-                                split={<Divider type="vertical" />}
-                              >
-                                <Typography.Text ellipsis>
-                                  {foundAddress.area}
-                                </Typography.Text>
-                                <Typography.Text ellipsis>
-                                  {foundAddress.city}
-                                </Typography.Text>
+                              <Space size={0} wrap={false} split={<Divider type="vertical" />}>
+                                <Typography.Text ellipsis>{foundAddress.area}</Typography.Text>
+                                <Typography.Text ellipsis>{foundAddress.city}</Typography.Text>
                               </Space>
                             </ChipTag>
                           </Space>
@@ -249,9 +216,7 @@ const ProfilePage = () => {
                       ) : (
                         <div className="address-container">
                           <ChipTag icon={<BsPinMap />}>
-                            <Typography.Text ellipsis>
-                              Chưa có địa chỉ
-                            </Typography.Text>
+                            <Typography.Text ellipsis>Chưa có địa chỉ</Typography.Text>
                           </ChipTag>
                         </div>
                       )}
@@ -279,16 +244,10 @@ const ProfilePage = () => {
                     <Tooltip title="Biến động chi tiêu" placement="bottomRight">
                       <div style={{ maxWidth: 360 }}>
                         {valueSegment === "barChart" && (
-                          <TinyColumnChart
-                            data={dataForTinyChart(myOrdersList)}
-                            autoFit={true}
-                          />
+                          <TinyColumnChart data={dataForTinyChart(myOrdersList)} autoFit={true} />
                         )}
                         {valueSegment === "areaChart" && (
-                          <TinyAreaChart
-                            data={dataForTinyChart(myOrdersList)}
-                            autoFit={true}
-                          />
+                          <TinyAreaChart data={dataForTinyChart(myOrdersList)} autoFit={true} />
                         )}
                       </div>
                     </Tooltip>
@@ -304,11 +263,7 @@ const ProfilePage = () => {
                 {
                   key: "history",
                   tab: (
-                    <ChipTag
-                      size={4}
-                      fontSize={18}
-                      icon={<RiHistoryFill size={17} />}
-                    >
+                    <ChipTag size={4} fontSize={18} icon={<RiHistoryFill size={17} />}>
                       Đơn hàng · {myOrdersList.length}
                     </ChipTag>
                   ),
@@ -316,11 +271,7 @@ const ProfilePage = () => {
                 {
                   key: "wishlist",
                   tab: (
-                    <ChipTag
-                      size={4}
-                      fontSize={18}
-                      icon={<BsHeart size={16} />}
-                    >
+                    <ChipTag size={4} fontSize={18} icon={<BsHeart size={16} />}>
                       Yêu thích · {myProductsWishlist.length}
                     </ChipTag>
                   ),
@@ -328,11 +279,7 @@ const ProfilePage = () => {
                 {
                   key: "review",
                   tab: (
-                    <ChipTag
-                      size={4}
-                      fontSize={18}
-                      icon={<BsStar size={16.5} />}
-                    >
+                    <ChipTag size={4} fontSize={18} icon={<BsStar size={16.5} />}>
                       Đã đánh giá · {myProductReviews.length}
                     </ChipTag>
                   ),
@@ -340,11 +287,7 @@ const ProfilePage = () => {
                 {
                   key: "address_list",
                   tab: (
-                    <ChipTag
-                      size={4}
-                      fontSize={18}
-                      icon={<BsJournalText size={16.5} />}
-                    >
+                    <ChipTag size={4} fontSize={18} icon={<BsJournalText size={16.5} />}>
                       Sổ địa chỉ · {myAddressList.length}
                     </ChipTag>
                   ),
@@ -352,11 +295,7 @@ const ProfilePage = () => {
                 {
                   key: "setting",
                   tab: (
-                    <ChipTag
-                      size={4}
-                      fontSize={18}
-                      icon={<BsGear size={16.5} />}
-                    >
+                    <ChipTag size={4} fontSize={18} icon={<BsGear size={16.5} />}>
                       Cài đặt
                     </ChipTag>
                   ),
@@ -368,33 +307,23 @@ const ProfilePage = () => {
               }}
               bordered={false}
             >
-              <div
-                className={
-                  activeTabKey !== "history" ? "hidden" : "history-container"
-                }
-              >
+              <div className={activeTabKey !== "history" ? "hidden" : "history-container"}>
                 <div className="header-filter">
                   <LocalSearch
                     placeholder="Tìm kiếm đơn hàng theo Mã đơn hàng"
                     onFinish={handleLocalSearch}
-                    onValuesChange={(changedValue, values) =>
-                      handleLocalSearch(values)
-                    }
+                    onValuesChange={(changedValue, values) => handleLocalSearch(values)}
                   />
                   <div className="header-filter-statuses">
                     <Typography.Text type="secondary">
-                      <ChipTag icon={<BsSliders />}>
-                        Trạng thái đơn hàng:
-                      </ChipTag>
+                      <ChipTag icon={<BsSliders />}>Trạng thái đơn hàng:</ChipTag>
                     </Typography.Text>
                     <Space size={0}>
                       {statusList.map((item) => (
                         <Tag.CheckableTag
                           key={item.value}
                           checked={item.value === selectedTag}
-                          onChange={(checked) =>
-                            handleChangeChecked(item.value, checked)
-                          }
+                          onChange={(checked) => handleChangeChecked(item.value, checked)}
                           style={{ fontSize: 14 }}
                         >
                           {item.name}
@@ -415,12 +344,7 @@ const ProfilePage = () => {
                   dataSource={myOrdersListFiltered}
                   renderItem={(item) => (
                     <Row className="order-item" key={item._id}>
-                      <Divider
-                        plain
-                        orientation="left"
-                        orientationMargin={0}
-                        style={{ margin: 0 }}
-                      >
+                      <Divider plain orientation="left" orientationMargin={0} style={{ margin: 0 }}>
                         <Tag color={setColorByStatus(item.orderStatus.value)}>
                           {item.orderStatus.name}
                         </Tag>
@@ -459,19 +383,14 @@ const ProfilePage = () => {
                                         preview={false}
                                       />
                                       <div className="orderitems-quantity">
-                                        <ChipTag
-                                          icon={<BsBoxSeam size={16.5} />}
-                                        >
+                                        <ChipTag icon={<BsBoxSeam size={16.5} />}>
                                           x{ot.saved_quantity}
                                         </ChipTag>
                                       </div>
                                     </div>
                                   }
                                   title={
-                                    <Typography.Text
-                                      ellipsis
-                                      className="orderitems-name"
-                                    >
+                                    <Typography.Text ellipsis className="orderitems-name">
                                       {ot.saved_name}
                                     </Typography.Text>
                                   }
@@ -488,11 +407,7 @@ const ProfilePage = () => {
                                               <Tag
                                                 color={o.value}
                                                 className={"tag"}
-                                                style={{
-                                                  height: 22,
-                                                  width: 22,
-                                                  margin: 0,
-                                                }}
+                                                style={{ height: 22, width: 22, margin: 0 }}
                                               >
                                                 {" "}
                                               </Tag>
@@ -522,9 +437,7 @@ const ProfilePage = () => {
                         <div className="container">
                           <Statistic
                             prefix={
-                              <Typography.Text
-                                style={{ fontSize: 16, color: "#262626" }}
-                              >
+                              <Typography.Text style={{ fontSize: 16, color: "#262626" }}>
                                 Tổng tiền: $
                               </Typography.Text>
                             }
@@ -534,15 +447,11 @@ const ProfilePage = () => {
                           />
                           <Space size={8} wrap={false}>
                             {item.orderStatus.value === "PROCESSING" && (
-                              <Button onClick={() => handleCancelMyOrder(item)}>
-                                Hủy đơn
-                              </Button>
+                              <Button onClick={() => handleCancelMyOrder(item)}>Hủy đơn</Button>
                             )}
                             <Button
                               onClick={() =>
-                                setSelectedProductId(
-                                  item.orderItems[0]?.product || null
-                                )
+                                setSelectedProductId(item.orderItems[0]?.product || null)
                               }
                             >
                               Mua lại
@@ -587,16 +496,10 @@ const ProfilePage = () => {
                         </ChipTag>
                       }
                       tags={[
-                        <Tag
-                          color={setColorByStatus(
-                            selectedOrder.orderStatus.value
-                          )}
-                        >
+                        <Tag color={setColorByStatus(selectedOrder.orderStatus.value)}>
                           {selectedOrder.orderStatus.name}
                         </Tag>,
-                        <PaymentInfoTag
-                          paymentInfo={selectedOrder.paymentInfo}
-                        />,
+                        <PaymentInfoTag paymentInfo={selectedOrder.paymentInfo} />,
                       ]}
                       breadcrumb={
                         <Breadcrumb>
@@ -609,9 +512,7 @@ const ProfilePage = () => {
                           >
                             Đơn hàng
                           </Breadcrumb.Item>
-                          <Breadcrumb.Item onClick={() => ""}>
-                            {selectedOrder._id}
-                          </Breadcrumb.Item>
+                          <Breadcrumb.Item onClick={() => ""}>{selectedOrder._id}</Breadcrumb.Item>
                         </Breadcrumb>
                       }
                       style={{ padding: 0, marginBottom: 24 }}
@@ -632,9 +533,7 @@ const ProfilePage = () => {
                           <div className="timeline-container">
                             {selectedOrder.orderLog.length && (
                               <Timeline
-                                pending={
-                                  !selectedOrder ? "Đang xử lý..." : false
-                                }
+                                pending={!selectedOrder ? "Đang xử lý..." : false}
                                 mode="left"
                               >
                                 {selectedOrder.orderLog.map((stt) => (
@@ -642,10 +541,7 @@ const ProfilePage = () => {
                                     key={stt._id}
                                     label={
                                       <Typography.Text ellipsis>
-                                        {formatDate(
-                                          stt.createdAt,
-                                          "DD-MM-YYYY HH:mm:ss"
-                                        )}
+                                        {formatDate(stt.createdAt, "DD-MM-YYYY HH:mm:ss")}
                                       </Typography.Text>
                                     }
                                     color="blue"
@@ -667,20 +563,12 @@ const ProfilePage = () => {
                                         }
                                       />
                                       {stt.createdBy === user?._id ? (
-                                        <ChipTag
-                                          icon={
-                                            <Avatar
-                                              src={user.picture}
-                                              size={16}
-                                            />
-                                          }
-                                        >
+                                        <ChipTag icon={<Avatar src={user.picture} size={16} />}>
                                           {user.name}
                                         </ChipTag>
                                       ) : (
                                         <ChipTag icon={<BsPersonCircle />}>
-                                          {stt.createdBy.substring(0, 10) +
-                                            "..."}
+                                          {stt.createdBy.substring(0, 10) + "..."}
                                         </ChipTag>
                                       )}
                                     </Space>
@@ -700,10 +588,7 @@ const ProfilePage = () => {
                         >
                           <Descriptions column={3} size="small">
                             <Descriptions.Item label="Tên người nhận" span={1}>
-                              <Typography.Text
-                                ellipsis
-                                style={{ maxWidth: 168 }}
-                              >
+                              <Typography.Text ellipsis style={{ maxWidth: 168 }}>
                                 {selectedOrder.shippingInfo.name}
                               </Typography.Text>
                             </Descriptions.Item>
@@ -761,9 +646,7 @@ const ProfilePage = () => {
                                     <Statistic
                                       prefix="x"
                                       groupSeparator=","
-                                      value={getTotalCount(
-                                        selectedOrder.orderItems
-                                      )}
+                                      value={getTotalCount(selectedOrder.orderItems)}
                                       valueStyle={{ fontSize: 16 }}
                                     />
                                   </span>
@@ -821,17 +704,11 @@ const ProfilePage = () => {
                   </div>
                 )}
               </div>
-              <div
-                className={
-                  activeTabKey !== "wishlist" ? "hidden" : "wishlist-container"
-                }
-              >
+              <div className={activeTabKey !== "wishlist" ? "hidden" : "wishlist-container"}>
                 <MasonryLayout columns={3} gap={24}>
                   {myProductsWishlist
                     ? myProductsWishlist.map(({ modelId: item }) => {
-                        const totalQuantity = getTotalInventoryQuantity(
-                          item.variants
-                        );
+                        const totalQuantity = getTotalInventoryQuantity(item.variants);
                         const totalSold = getTotalInventorySold(item.variants);
                         return (
                           <div className="wishlist-item" key={item._id}>
@@ -865,26 +742,17 @@ const ProfilePage = () => {
                                         <Statistic
                                           prefix={
                                             <Typography.Text
-                                              style={{
-                                                fontSize: 14,
-                                                color: "#eee",
-                                              }}
+                                              style={{ fontSize: 14, color: "#eee" }}
                                             >
                                               Đã bán:
                                             </Typography.Text>
                                           }
                                           groupSeparator="."
                                           value={totalSold}
-                                          valueStyle={{
-                                            fontSize: 16,
-                                            color: "#fff",
-                                          }}
+                                          valueStyle={{ fontSize: 16, color: "#fff" }}
                                           suffix={
                                             <Typography.Text
-                                              style={{
-                                                fontSize: 14,
-                                                color: "#eee",
-                                              }}
+                                              style={{ fontSize: 14, color: "#eee" }}
                                             >
                                               {" "}
                                               / {totalQuantity + totalSold}
@@ -895,14 +763,11 @@ const ProfilePage = () => {
                                     >
                                       <Progress
                                         strokeColor={{
-                                          from: themeProvider
-                                            .generatedColors[4],
+                                          from: themeProvider.generatedColors[4],
                                           to: themeProvider.generatedColors[1],
                                         }}
                                         percent={(totalSold > 0
-                                          ? (totalSold /
-                                              (totalQuantity + totalSold)) *
-                                            100
+                                          ? (totalSold / (totalQuantity + totalSold)) * 100
                                           : 0
                                         ).toFixed(2)}
                                         strokeWidth={12}
@@ -920,19 +785,14 @@ const ProfilePage = () => {
                                     icon={<BsCartPlus />}
                                     className="btn-cart"
                                     title="Thêm vào giỏ hàng"
-                                    onClick={() =>
-                                      setSelectedProductId(item._id)
-                                    }
+                                    onClick={() => setSelectedProductId(item._id)}
                                   ></Button>
                                 </div>
                                 <div className="actions-wishlist">
                                   <button
                                     disabled={toggleProductWishlistLoading}
                                     className={classNames("btn-wishlist", {
-                                      active: isWishlisted(
-                                        item.wishlist,
-                                        user?._id
-                                      ),
+                                      active: isWishlisted(item.wishlist, user?._id),
                                       loading: toggleProductWishlistLoading,
                                     })}
                                     onClick={() =>
@@ -956,16 +816,11 @@ const ProfilePage = () => {
                                   <Typography.Text
                                     ellipsis
                                     className="title"
-                                    onClick={() =>
-                                      navigate(`/products/${item._id}`)
-                                    }
+                                    onClick={() => navigate(`/products/${item._id}`)}
                                   >
                                     {item.name}
                                   </Typography.Text>
-                                  <Typography.Paragraph
-                                    type="secondary"
-                                    ellipsis={{ rows: 2 }}
-                                  >
+                                  <Typography.Paragraph type="secondary" ellipsis={{ rows: 2 }}>
                                     {item.desc}
                                   </Typography.Paragraph>
                                 </div>
@@ -977,11 +832,7 @@ const ProfilePage = () => {
                     : ""}
                 </MasonryLayout>
               </div>
-              <div
-                className={
-                  activeTabKey !== "review" ? "hidden" : "review-container"
-                }
-              >
+              <div className={activeTabKey !== "review" ? "hidden" : "review-container"}>
                 <List
                   className="comment-list"
                   loading={!myProductReviews}
@@ -992,52 +843,27 @@ const ProfilePage = () => {
                     <li>
                       <Comment
                         actions={[
-                          <Space
-                            wrap={false}
-                            size={4}
-                            split={<Divider type="vertical" />}
-                          >
+                          <Space wrap={false} size={4} split={<Divider type="vertical" />}>
                             <ChipTag
-                              icon={
-                                upvoteValue ? (
-                                  <BsHandThumbsUpFill />
-                                ) : (
-                                  <BsHandThumbsUp />
-                                )
-                              }
+                              icon={upvoteValue ? <BsHandThumbsUpFill /> : <BsHandThumbsUp />}
                               onClick={() => setUpvoteValue(1)}
                             >
                               {upvoteValue}
                             </ChipTag>
                             <ChipTag
-                              icon={
-                                downvoteValue ? (
-                                  <BsHandThumbsDownFill />
-                                ) : (
-                                  <BsHandThumbsDown />
-                                )
-                              }
+                              icon={downvoteValue ? <BsHandThumbsDownFill /> : <BsHandThumbsDown />}
                               onClick={() => setDownvoteValue(1)}
                             >
                               {downvoteValue}
                             </ChipTag>
                             <ChipTag
-                              icon={
-                                <Avatar size={15}>
-                                  {item.modelId.name[0]}
-                                </Avatar>
-                              }
+                              icon={<Avatar size={15}>{item.modelId.name[0]}</Avatar>}
                               className="colorful rounded chiptag-product"
                               color={"#d9d9d9"}
-                              onClick={() =>
-                                navigate(`/products/${item.modelId._id}`)
-                              }
+                              onClick={() => navigate(`/products/${item.modelId._id}`)}
                             >
                               <Tooltip title="Đi đến sản phẩm">
-                                <Typography.Text
-                                  ellipsis
-                                  style={{ maxWidth: 240 }}
-                                >
+                                <Typography.Text ellipsis style={{ maxWidth: 240 }}>
                                   {item.modelId.name}
                                 </Typography.Text>
                               </Tooltip>
@@ -1060,9 +886,7 @@ const ProfilePage = () => {
                             >
                               {item.rating}
                             </ChipTag>
-                            <Typography.Text
-                              strong={item.createdBy?._id === user?._id}
-                            >
+                            <Typography.Text strong={item.createdBy?._id === user?._id}>
                               {item.createdBy?.name}
                             </Typography.Text>
                           </Space>
@@ -1074,11 +898,7 @@ const ProfilePage = () => {
                         }
                         content={
                           <Typography.Paragraph
-                            ellipsis={{
-                              rows: 3,
-                              expandable: true,
-                              symbol: "Xem thêm",
-                            }}
+                            ellipsis={{ rows: 3, expandable: true, symbol: "Xem thêm" }}
                           >
                             {item.comment}
                           </Typography.Paragraph>
@@ -1089,13 +909,7 @@ const ProfilePage = () => {
                   )}
                 />
               </div>
-              <div
-                className={
-                  activeTabKey !== "address_list"
-                    ? "hidden"
-                    : "address-container"
-                }
-              >
+              <div className={activeTabKey !== "address_list" ? "hidden" : "address-container"}>
                 <List
                   dataSource={myAddressList}
                   rowKey={(item) => item._id}
@@ -1106,26 +920,15 @@ const ProfilePage = () => {
                         <div className="image-wrapper">
                           <Badge
                             dot
-                            status={
-                              user?.defaultAddress === item._id
-                                ? "success"
-                                : "default"
-                            }
+                            status={user?.defaultAddress === item._id ? "success" : "default"}
                           >
-                            <Avatar
-                              size={107}
-                              shape="square"
-                              icon={<BsPinMap />}
-                            />
+                            <Avatar size={107} shape="square" icon={<BsPinMap />} />
                           </Badge>
                         </div>
                         <div className="content-wrapper">
                           <Descriptions column={3} size="small">
                             <Descriptions.Item label="Tên người nhận" span={1}>
-                              <Typography.Text
-                                ellipsis
-                                style={{ maxWidth: 168 }}
-                              >
+                              <Typography.Text ellipsis style={{ maxWidth: 168 }}>
                                 {item.name}
                               </Typography.Text>
                             </Descriptions.Item>
@@ -1205,11 +1008,7 @@ const ProfilePage = () => {
                   Thêm địa chỉ
                 </Button>
               </div>
-              <div
-                className={
-                  activeTabKey !== "setting" ? "hidden" : "setting-container"
-                }
-              >
+              <div className={activeTabKey !== "setting" ? "hidden" : "setting-container"}>
                 <Divider plain orientation="left">
                   <Tag color={"processing"}>Cập nhật thông tin</Tag>
                 </Divider>

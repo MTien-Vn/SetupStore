@@ -63,10 +63,6 @@ const CheckoutCODPage = () => {
   const productItems = cart?.products || [];
   const SHIPPING = productItems.length;
 
-  useLayoutEffect(() => {
-    myCartRefetch();
-  }, []);
-
   const handleSubmit = async (values) => {
     try {
       if (!selectedAddress) {
@@ -91,10 +87,11 @@ const CheckoutCODPage = () => {
       });
       console.log("handleSubmit ~ createOrderRes", createOrderRes);
       await message.success("Tạo đơn hàng thành công");
-      myCartRefetch();
     } catch (err) {
       message.error("Đã có lỗi xảy ra");
       console.log("err", err);
+    } finally {
+      myCartRefetch();
     }
   };
 

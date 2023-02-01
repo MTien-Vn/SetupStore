@@ -1,14 +1,4 @@
-import {
-  Col,
-  Form,
-  Input,
-  message,
-  Modal,
-  Progress,
-  Row,
-  Space,
-  Typography,
-} from "antd";
+import { Col, Form, Input, message, Modal, Progress, Row, Space, Typography } from "antd";
 import { updatePassword } from "firebase/auth";
 import React, { useEffect, useState } from "react";
 import { BsEnvelope } from "react-icons/bs";
@@ -49,11 +39,7 @@ const UpdatePasswordForm = () => {
   const modalLogout = () => {
     let secondsToGo = 10;
     const modal = Modal.confirm({
-      title: (
-        <Typography.Text type="success">
-          Cập nhật mật khẩu thành công!
-        </Typography.Text>
-      ),
+      title: <Typography.Text type="success">Cập nhật mật khẩu thành công!</Typography.Text>,
       icon: null,
       content: null,
       centered: true,
@@ -165,9 +151,7 @@ const UpdatePasswordForm = () => {
                 if (!value || getFieldValue("password") === value) {
                   return Promise.resolve();
                 }
-                return Promise.reject(
-                  new Error("Mật khẩu xác nhận chưa khớp!")
-                );
+                return Promise.reject(new Error("Mật khẩu xác nhận chưa khớp!"));
               },
             }),
           ]}
@@ -183,8 +167,7 @@ const UpdatePasswordForm = () => {
               disabled={
                 loading ||
                 !form.isFieldsTouched(true) ||
-                !!form.getFieldsError().filter(({ errors }) => errors.length)
-                  .length
+                !!form.getFieldsError().filter(({ errors }) => errors.length).length
               }
             >
               Xác nhận thay đổi

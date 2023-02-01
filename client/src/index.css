@@ -60,22 +60,22 @@ html {
   display: none;
 }
 
-.ant-popover-inner {
-  border-radius: 4px;
-}
 .ant-popover-buttons .ant-btn {
   display: inline-flex;
+}
+.ant-popover-inner {
+  border-radius: 4px;
 }
 
 .ant-table-footer {
   background-color: transparent;
   padding-bottom: 0;
 }
-.ant-input-clear-icon {
-  font-size: 16px;
-}
 .ant-table-pagination.ant-pagination {
   margin: 0;
+}
+.ant-input-clear-icon {
+  font-size: 16px;
 }
 .table-fixed-pagination .ant-table-pagination.ant-pagination {
   position: fixed;

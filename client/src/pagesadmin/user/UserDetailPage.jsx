@@ -139,6 +139,7 @@ const ProductCreateUpdateDetailPage = () => {
       console.log(err);
     }
   };
+
   const handleDeleteUser = () => {
     let secondsToGo = 5;
     const modal = Modal.confirm({
@@ -249,7 +250,6 @@ const ProductCreateUpdateDetailPage = () => {
       console.log("err", err);
     }
   };
-
   return (
     <AdminLayout>
       <ContentWrapper>
@@ -671,7 +671,8 @@ const ProductCreateUpdateDetailPage = () => {
       </Modal>
     </AdminLayout>
   );
-}
+};
+
 const ContentWrapper = styled.div`
   width: 100%;
   max-width: 1240px;
