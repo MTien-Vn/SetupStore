@@ -8,8 +8,8 @@ const { authCheck, isAuthenticatedUser, adminCheck } = require("../auth/auth.val
 const {
   createProductReview,
   getAllReviews,
-  getFilteredComboReviews,
   getFilteredProductReviews,
+  getFilteredComboReviews,
   getFilteredReviews,
   removeReview,
 } = require("./review.controller");
@@ -23,8 +23,8 @@ const {
 router.post("/review", authCheck, isAuthenticatedUser, createProductReview);
 router.get("/reviews", getFilteredReviews);
 router.get("/product/:productId/reviews", getFilteredProductReviews);
-router.get("/admin/reviews", authCheck, adminCheck, getAllReviews);
 router.get("/combo/:comboId/reviews", getFilteredComboReviews);
+router.get("/admin/reviews", authCheck, adminCheck, getAllReviews);
 router.delete("/admin/review", authCheck, adminCheck, removeReview);
 
 router.get("/wishlist", authCheck, isAuthenticatedUser, getWishlistByUserId);

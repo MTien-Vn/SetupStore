@@ -2,23 +2,17 @@ const dayjs = require("dayjs");
 const customParseFormat = require("dayjs/plugin/customParseFormat");
 dayjs.extend(customParseFormat);
 const DAYJS_FORMAT = "DD-MM-YYYY";
-exports.checkIsBeforeDate = (date1, date2) => {
-  if (date1 && date2) return dayjs(date1).isBefore(dayjs(date2));
-  return false;
-};
 exports.getDateFormat = (date) => {
   if (!date || !dayjs(date, DAYJS_FORMAT).isValid()) return null;
   return dayjs(date, DAYJS_FORMAT).add(1, "day").toDate();
 };
+exports.checkIsBeforeDate = (date1, date2) => {
+  if (date1 && date2) return dayjs(date1).isBefore(dayjs(date2));
+  return false;
+};
+
 
 exports.convertToNumber = (value) => (Number.isNaN(Number(value)) ? 0 : Number(value));
-
-exports.isValidURL = (string) => {
-  const res = string.match(
-    /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g
-  );
-  return res !== null;
-};
 
 exports.getTotalPage = (total, limit) => {
   let totalPage =
@@ -27,17 +21,23 @@ exports.getTotalPage = (total, limit) => {
   return totalPage === 0 ? 1 : totalPage;
 };
 
+exports.isValidURL = (string) => {
+  const res = string.match(
+    /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g
+  );
+  return res !== null;
+};
 
 exports.vietnameseSlug = (str, separator = "-") => {
   if (str) {
     str = str.trim();
     str = str.toLowerCase();
+    str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
+    str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
     str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
     str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
     str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
     str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
-    str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
-    str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
     str = str.replace(/đ/g, "d");
     // Some system encode vietnamese combining accent as individual utf-8 characters
     // Một vài bộ encode coi các dấu mũ, dấu chữ như một kí tự riêng biệt nên thêm hai dòng này

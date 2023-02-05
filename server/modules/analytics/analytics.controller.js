@@ -63,6 +63,7 @@ exports.getProductVariantsStats = async (req, res) => {
     res.status(400).json({ success: false, err: err.message });
   }
 };
+
 exports.getIncomeStats = async (req, res) => {
   let { begin, end, orderStatus } = req.query;
 
@@ -179,6 +180,7 @@ exports.getStatusStats = async (req, res) => {
     res.status(400).json({ success: false, err: err.message });
   }
 };
+
 exports.getUsersStats = async (req, res) => {
   let { begin, end } = req.query;
 
