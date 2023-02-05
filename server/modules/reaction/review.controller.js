@@ -9,8 +9,8 @@ exports.getAllReviews = async (req, res) => {
   try {
     const { sort, rating, onModel } = req.query;
 
-    let sortCondition = {};
     let filter = {};
+    let sortCondition = {};
 
     if (onModel) filter.onModel = onModel;
 
