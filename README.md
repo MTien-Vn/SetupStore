@@ -25,5 +25,7 @@ With the spread of Covid-19 and the development of information technology, nowad
 - Firebase để quản lý authentication, dữ liệu user vẫn đc lưu vào DB
 - Nodejs để làm backend
 - Stripe để thanh toán online
+- Deploy: heroku and vercel
 
-==>> doc: https://docs.google.com/document/d/1Qz7IS3Q4iV-HkaLGOWeLnRkPSfskDNqwVKU5rWLRMQo/edit
+- Deploy api: https://setup-store-v2.onrender.com/api
+- Deploy web: https://setup-store-v2.vercel.app/
